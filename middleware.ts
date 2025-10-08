@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     // If the token is not present, redirect to the /products page
     if (!token) {
-      return NextResponse.redirect(new URL('/products', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
   // Check if logged-in user is trying to access non-admin routes (except API routes and login)
