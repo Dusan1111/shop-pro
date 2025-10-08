@@ -1,0 +1,178 @@
+.attributeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.attributesList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.attributeRow {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--input);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attributeControls {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.attributeSelect {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+}
+
+.selectInput {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--input);
+  font-size: 14px;
+  height: 40px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  &:disabled {
+    background-color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.removeButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #c82333;
+  }
+
+  &:disabled {
+    background-color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.attributeValuesSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.valuesLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.addButton {
+  padding: 12px 20px;
+  border: 2px dashed var(--primary);
+  background-color: transparent;
+  color: var(--primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+
+  &:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  &:disabled {
+    border-color: var(--muted);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted-foreground);
+
+  p {
+    margin: 0 0 16px 0;
+    font-style: italic;
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .attributeRow {
+    padding: 12px;
+  }
+
+  .attributeControls {
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .removeButton {
+    align-self: center;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    padding: 0px !important;
+  }
+
+  .addButton {
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .attributeSelector {
+    gap: 12px;
+  }
+
+  .attributesList {
+    gap: 16px;
+  }
+
+  .attributeRow {
+    padding: 10px;
+  }
+
+  .emptyState {
+    padding: 24px 12px;
+  }
+}

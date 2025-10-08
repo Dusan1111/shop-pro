@@ -1,0 +1,20 @@
+.submit_button_wrapper {
+    display: flex;
+    justify-content: flex-end;
+    height: 30px;
+    width: 80px;
+
+    .submit_button {
+        height: 30px;
+        width: 80px;
+        border: solid 1px rgb(44, 223, 44);
+        background-color: transparent;
+        border-radius: 8px;
+    }
+
+    .submit_button:hover {
+        cursor: pointer;
+        background-color: rgb(44, 223, 44);
+        color: white;
+    }
+}

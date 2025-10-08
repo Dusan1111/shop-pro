@@ -1,0 +1,256 @@
+th {
+  color: #1a1a1a;
+  font-weight: 600;
+  text-align: start;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tableContainer {
+  overflow: auto;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow-x: visible;
+  min-height: 200px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.table th {
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.rowsPerLabel {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.table tr {
+  cursor: pointer;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.15s ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color:var(--primary);
+  transform: scale(1.001);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  color: white;
+}
+
+.table tr.selected {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 500;
+}
+
+.table tr.active {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 500;
+}
+
+.remove_column {
+  width: 10%;
+  display: flex;
+  gap: 10px;
+}
+
+.sortable {
+  user-select: none;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.pagination {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 300px;
+}
+
+.pagination button {
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pagination button.activePage {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+
+  &:hover {
+    background-color: var(--primary);
+    opacity: 0.9;
+  }
+}
+
+.pagination button.currentPage {
+  &:hover {
+    background-color: #f3f4f6;
+  }
+}
+
+#rowsPerPage {
+  padding: 8px 12px;
+  width: 75px;
+  margin-left: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #d1d5db;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.highlight {
+  background: linear-gradient(120deg, #fef08a 0%, #fde047 100%);
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.rowsPerPageSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.headerSearch {
+  margin-top: 8px;
+  width: 100%;
+  max-width: 200px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #374151;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:hover {
+    border-color: #d1d5db;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.loadingOverlay {
+  position: relative;
+  padding: 60px 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.currentPage {
+  color: var(--primary);
+}
+
+.bottom-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+  font-size: 14px;
+  min-width: 300px;
+}
+
+.headerSearch-wrapper {
+  display: flex;
+}
+
+.spinner {
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

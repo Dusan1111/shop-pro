@@ -1,0 +1,15 @@
+.adminLayout {
+  display: flex;
+  min-height: 60vh;
+  overflow-x: auto;
+  /* Enable horizontal scrolling */
+  box-shadow: #292727 0px 0px 10px 0px;
+  margin-top: 40px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 6.25rem 3.125rem;
+}

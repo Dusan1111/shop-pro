@@ -1,0 +1,15 @@
+.remove_button_wrapper {
+.remove_button {
+    background-color:  rgb(223, 44, 44);;
+    cursor: pointer;
+    border-radius: 8px;
+    color: white;
+    border: none;
+  } 
+  
+  .remove_button:hover {
+    background-color:  darkred;
+    border: solid 1px darkred;
+    color:white
+  }
+}

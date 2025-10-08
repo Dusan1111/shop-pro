@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/PC/AppData/Local/Packages/5319275A.WhatsAppDesktop_cv1g1gvanyjgm/TempState/421B9FF13E012545C871FFF7824CD12A/**)",
+      "WebFetch(domain:bohome.shop)",
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:tanstack.com)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

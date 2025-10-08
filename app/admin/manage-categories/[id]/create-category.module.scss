@@ -1,0 +1,157 @@
+.categoryPage {
+  /* background-color: white;  */
+  padding: 30px 20px 20px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 2rem;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 60px;
+    font-size: 28px;
+    grid-column: 1 / -1;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+    text-align: center;
+    grid-column: 1 / -1;
+  }
+
+  // Main image in second column
+  .mainImageSection {
+    grid-column: 2;
+    grid-row: 2 / -2;
+  }
+
+  .actionsSection {
+    grid-column: 1 / -1;
+    margin-top: 2rem;
+  }
+
+  // Mobile responsiveness - single column
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 20px 15px;
+    max-width: 600px;
+
+    .imageWrapper {
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .mainImageSection,
+    .actionsSection {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .mainImageSection {
+      order: -1;
+    }
+
+    .actionsSection {
+      order: 10;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 10px;
+
+    .imageWrapper {
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.imageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  align-items: flex-start;
+
+  button {
+    width: 100px;
+  }
+}
+
+.addImageButton {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 2px dashed var(--primary);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 2rem;
+
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  input {
+    display: none;
+  }
+}
+
+// Skeleton Styles
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeletonImage {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonInput {
+  width: 100%;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonTextarea {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonButton {
+  width: 120px;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}

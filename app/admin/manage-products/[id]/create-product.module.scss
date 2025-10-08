@@ -1,0 +1,447 @@
+.productPage {
+  border-radius: var(--radius);
+  padding: 30px 20px 20px 20px;
+  display: grid;
+  flex-direction: column;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 5px 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 60px;
+    font-size: 28px;
+    // grid-column: 1 / -1;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+    text-align: center;
+    grid-column: 1 / -1;
+  }
+
+  // Main image in third column, detail images in last row
+  .mainImageSection {
+    grid-column: 3;
+    grid-row: 2 / span 4;
+    align-self: start;
+    position: sticky;
+    top: 20px;
+
+    .imageContainer {
+      // max-height: 250px;
+      max-width: 250px;
+      height: auto;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .addImageButton {
+      width: 150px;
+      height: 150px;
+      font-size: 2.5rem;
+    }
+  }
+
+  .detailImagesSection {
+    grid-column: 1 / -1;
+    grid-row: 10;
+  }
+
+  .actionsSection {
+    grid-column: 1 / -1;
+    grid-row: 11;
+  }
+
+  // Tablet - reduce third column width
+  @media (max-width: 1024px) {
+    // grid-template-columns: 1fr 1fr 1fr;
+    // max-width: 1200px;
+  }
+
+  // Mobile responsiveness - single column
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 20px 15px;
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    .mainImageSection,
+    .detailImagesSection,
+    .actionsSection {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .mainImageSection {
+      order: -2;
+    }
+
+    .detailImagesSection {
+      order: 10;
+      grid-column: 1;
+    }
+
+    .actionsSection {
+      order: 11;
+      grid-column: 1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    // padding: 15px 10px;
+    gap: 5px;
+
+    h1 {
+      font-size: 20px;
+      // margin-bottom: 20px;
+    }
+  }
+}
+
+.imageUpload {
+  margin-top: 200px !important;
+}
+
+.imageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0;
+  align-items: center;
+
+  button {
+    width: 100px;
+    padding: 8px 16px;
+    font-size: 13px;
+
+    @media (max-width: 480px) {
+      font-size: 12px;
+    }
+  }
+}
+
+.imagesWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    justify-content: center;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  // width: 100px;
+  //  height: 400px !important;
+  // height: 300px;
+  // width: 230px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+
+  img {
+    width: 100%;
+    height: 100% !important;
+    object-fit: contain;
+  }
+
+  .deleteImageButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgb(194, 1, 1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    padding: 0;
+    cursor: pointer;
+
+    @media (max-width: 480px) {
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      top: 3px;
+      right: 3px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 80px;
+
+    img {
+      height: 80px;
+    }
+  }
+}
+
+.fileInput {
+  width: auto !important;
+  height: 50px !important;
+}
+
+.addImageButton {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 2px dashed var(--primary);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 2rem;
+
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  input {
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 80px;
+    font-size: 1.5rem;
+  }
+}
+
+// Skeleton Styles
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.mainImageSection .skeletonImage {
+  width: 150px;
+  height: 150px;
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.skeletonInput,
+.skeletonSelect {
+  width: 100%;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonTextarea {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonCheckbox {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+
+  .toggleLabel {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--foreground);
+    position: static;
+  }
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  &:active:not([disabled]) .toggleSlider {
+    transform: scale(0.95);
+  }
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    pointer-events: none;
+
+    &:checked ~ .toggleSlider {
+      background-color: var(--primary);
+    }
+
+    &:checked ~ .toggleSlider:before {
+      transform: translateX(24px);
+    }
+
+    &:disabled ~ .toggleSlider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: all 0.3s ease;
+  border-radius: 34px;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:hover {
+    background-color: #b3b3b3;
+  }
+
+  input:checked ~ &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.skeletonButton {
+  width: 120px;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+.relatedProductsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  grid-column: 1 / -1;
+  grid-row: 8;
+
+  .sectionLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    margin: 0 0 8px 0;
+  }
+
+  @media (max-width: 768px) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+.sectionLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.attributesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  grid-column: 1 / -1;
+  grid-row: 9;
+
+  .sectionLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    margin: 0 0 12px 0;
+  }
+
+  @media (max-width: 768px) {
+    grid-row: auto;
+  }
+}
+
+.skeletonAttributeRow {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  .skeletonSelect {
+    flex: 1;
+  }
+}
