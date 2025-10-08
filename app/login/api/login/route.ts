@@ -32,15 +32,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Korisničko ime ili lozinka nisu validni!'}, { status: 401 });
     }
 
-    // Check if user is super admin (no tenantId)
+    // Lookup role if user has roleId
+    let roleName = null;
+    if (user.roleId) {
+      const role = await settingsDb.collection('Roles').findOne({ _id: user.roleId }) as any;
+      if (role) {
+        roleName = role.name;
+      }
+    }
+
+    // Ch      }, JWT_SECRET, { expiresIn: '7d' });
+      console.log('Super admin token:', user);
     if (!user.tenantId) {
       // Super admin - use settings database
       const token = jwt.sign({
         userId: user._id,
         isSuperAdmin: true,
-        dbName: settingsDbName
+        dbName: settingsDbName,
+        role: roleName
       }, JWT_SECRET, { expiresIn: '7d' });
-
       const cookie = serialize('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -60,7 +70,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ne postoji baza podataka za datu kompaniju'}, { status: 500 });
     }
 
-    const token = jwt.sign({ userId: user._id, tenantId: user.tenantId, dbName: tenant.dbName }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({
+      userId: user._id,
+      tenantId: user.tenantId,
+      dbName: tenant.dbName,
+      role: roleName
+    }, JWT_SECRET, { expiresIn: '7d' });
     const cookie = serialize('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

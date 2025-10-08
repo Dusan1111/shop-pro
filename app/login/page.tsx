@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const { setIsAdmin } = useAuth();
+  const { setIsAdmin, setIsSuperAdmin } = useAuth();
 
   const validate = () => {
     return {
@@ -77,8 +77,24 @@ export default function LoginPage() {
           setError(JSON.stringify(errorData.error));
         }
       } else {
-        setIsAdmin(true);
-        router.push("/admin/manage-orders");
+        // Check if user is super admin
+        const meResponse = await fetch("/api/auth/me");
+        if (meResponse.ok) {
+          const userData = await meResponse.json();
+          setIsAdmin(true);
+
+          if (userData.isSuperAdmin) {
+            setIsSuperAdmin(true);
+            router.push("/admin/manage-companies");
+          } else {
+            setIsSuperAdmin(false);
+            router.push("/admin/manage-orders");
+          }
+        } else {
+          // Fallback if /api/auth/me fails
+          setIsAdmin(true);
+          router.push("/admin/manage-orders");
+        }
       }
     } catch (err) {
       console.error("Greška prilikom logovanja:", err);

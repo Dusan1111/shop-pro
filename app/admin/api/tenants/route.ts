@@ -1,0 +1,157 @@
+import { NextRequest, NextResponse } from "next/server";
+import { clientPromise, settingsDbName } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+
+export async function GET(req: NextRequest) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(settingsDbName);
+    const tenants = await db.collection("Tenants")
+      .find({ isDeleted: false })
+      .toArray();
+
+    return NextResponse.json({ status: 200, data: tenants });
+  } catch (error) {
+    return NextResponse.json({ status: 500, message: (error as Error).message }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(settingsDbName);
+
+    const body = await req.json();
+    const { name, dbName, description } = body;
+
+    if (!name) {
+      return NextResponse.json(
+        { message: "Ime firme je obavezno!" },
+        { status: 400 }
+      );
+    }
+
+    if (!dbName) {
+      return NextResponse.json(
+        { message: "Ime baze podataka je obavezno!" },
+        { status: 400 }
+      );
+    }
+
+    const newTenant = {
+      name,
+      dbName,
+      description,
+      isDeleted: false,
+      createdAt: new Date(),
+    };
+
+    const result = await db.collection("Tenants").insertOne(newTenant);
+
+    return NextResponse.json({
+      message: "Firma uspešno dodata",
+      data: { _id: result.insertedId, ...newTenant },
+    }, { status: 201 });
+
+  } catch (error) {
+    console.error("Greška prilikom dodavanja firme!", error);
+    return NextResponse.json(
+      { message: error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(settingsDbName);
+
+    const { searchParams } = new URL(req.url);
+    const tenantId = searchParams.get("id");
+
+    if (!tenantId) {
+      return NextResponse.json(
+        { status: 400, message: "ID firme je obavezan!" },
+        { status: 400 }
+      );
+    }
+
+    const result = await db.collection("Tenants").updateOne(
+      { _id: new ObjectId(tenantId) },
+      { $set: { isDeleted: true } }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { status: 404, message: "Firma nije pronađena!" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      status: 200,
+      message: "Firma je uspešno obrisana!",
+    });
+  } catch (error) {
+    console.error("Greška prilikom brisanja firme!", error);
+    return NextResponse.json(
+      { status: 500, message: "Greška prilikom brisanja firme!" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const client = await clientPromise;
+    const db = client.db(settingsDbName);
+
+    const body = await req.json();
+    const { id, name, dbName, description } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { status: 400, message: "ID firme je obavezan!" },
+        { status: 400 }
+      );
+    }
+
+    if (!name) {
+      return NextResponse.json(
+        { status: 400, message: "Ime firme je obavezno!" },
+        { status: 400 }
+      );
+    }
+
+    if (!dbName) {
+      return NextResponse.json(
+        { status: 400, message: "Ime baze podataka je obavezno!" },
+        { status: 400 }
+      );
+    }
+
+    const result = await db.collection("Tenants").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { name, dbName, description, updatedAt: new Date() } }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { status: 404, message: "Firma nije pronađena!" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      status: 200,
+      message: "Firma je uspešno izmenjena.",
+    });
+  } catch (error) {
+    console.error("Greška prilikom izmene firme!", error);
+    return NextResponse.json(
+      { status: 500, message: "Greška prilikom izmene firme!" },
+      { status: 500 }
+    );
+  }
+}

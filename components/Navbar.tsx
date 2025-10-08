@@ -12,7 +12,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAdmin, setIsAdmin, isLoading } = useAuth();
+  const { isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -30,6 +30,7 @@ export default function Navbar() {
 
       // Reset admin state globally
       setIsAdmin(false);
+      setIsSuperAdmin(false);
 
       // Close the menu
       setIsMenuOpen(false);
@@ -78,35 +79,50 @@ export default function Navbar() {
             {isAdmin ? (
               // Admin navigation links
               <>
-                <Link
-                  href="/admin/manage-products"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={
-                    pathname === "/admin/manage-products" ? styles.active : ""
-                  }
-                >
-                  Proizvodi
-                </Link>
-                <Link
-                  href="/admin/manage-global-discounts"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={
-                    pathname === "/admin/manage-global-discounts"
-                      ? styles.active
-                      : ""
-                  }
-                >
-                  Popusti
-                </Link>
-                <Link
-                  href="/admin/manage-orders"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={
-                    pathname === "/admin/manage-orders" ? styles.active : ""
-                  }
-                >
-                  Porudžbine
-                </Link>
+                {isSuperAdmin && (
+                  <Link
+                    href="/admin/manage-companies"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={
+                      pathname === "/admin/manage-companies" ? styles.active : ""
+                    }
+                  >
+                    Kompanije
+                  </Link>
+                )}
+                {!isSuperAdmin && (
+                  <>
+                    <Link
+                      href="/admin/manage-products"
+                      onClick={() => setIsMenuOpen(false)}
+                      className={
+                        pathname === "/admin/manage-products" ? styles.active : ""
+                      }
+                    >
+                      Proizvodi
+                    </Link>
+                    <Link
+                      href="/admin/manage-global-discounts"
+                      onClick={() => setIsMenuOpen(false)}
+                      className={
+                        pathname === "/admin/manage-global-discounts"
+                          ? styles.active
+                          : ""
+                      }
+                    >
+                      Popusti
+                    </Link>
+                    <Link
+                      href="/admin/manage-orders"
+                      onClick={() => setIsMenuOpen(false)}
+                      className={
+                        pathname === "/admin/manage-orders" ? styles.active : ""
+                      }
+                    >
+                      Porudžbine
+                    </Link>
+                  </>
+                )}
                 <Link
                   href="/"
                   onClick={(e) => {

@@ -10,6 +10,7 @@ export interface TokenPayload {
   tenantId?: string;
   dbName: string;
   isSuperAdmin?: boolean;
+  role?: string | null;
 }
 
 export function verifyToken(token: string): TokenPayload | null {
@@ -42,6 +43,7 @@ export async function getUserDbFromSession() {
     userId: payload.userId,
     tenantId: payload.tenantId,
     dbName: payload.dbName,
-    isSuperAdmin: payload.isSuperAdmin || false
+    isSuperAdmin: payload.isSuperAdmin || false,
+    role: payload.role || null
   };
 }

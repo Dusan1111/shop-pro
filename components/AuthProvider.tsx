@@ -5,7 +5,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 interface AuthContextType {
   isAdmin: boolean;
   setIsAdmin: (value: boolean) => void;
-  isLoading: boolean; // New loading state
+  isSuperAdmin: boolean;
+  setIsSuperAdmin: (value: boolean) => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,23 +23,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     return false;
   });
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
+
+  const [isSuperAdmin, setIsSuperAdminState] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedIsSuperAdmin = localStorage.getItem("isSuperAdmin");
+      if (storedIsSuperAdmin !== null) {
+        return JSON.parse(storedIsSuperAdmin);
+      }
+    }
+    return false;
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
 
   // Function to update state and save to local storage
   const setIsAdmin = (value: boolean) => {
     setIsAdminState(value);
     if (typeof window !== "undefined") {
-      localStorage.setItem("isAdmin", JSON.stringify(value)); // Save to local storage
+      localStorage.setItem("isAdmin", JSON.stringify(value));
     }
   };
 
-  // Mark loading as complete after first render
+  const setIsSuperAdmin = (value: boolean) => {
+    setIsSuperAdminState(value);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("isSuperAdmin", JSON.stringify(value));
+    }
+  };
+
+  // Check super admin status on mount
   useEffect(() => {
-    setIsLoading(false);
+    const checkSuperAdmin = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setIsSuperAdmin(data.isSuperAdmin || false);
+        }
+      } catch (error) {
+        console.error('Error checking super admin status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSuperAdmin();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isLoading }}>
+    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
