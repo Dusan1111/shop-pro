@@ -1,12 +1,17 @@
 // app/api/companies/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { clientPromise, dbName } from "@/lib/mongodb";
+import { getUserDbFromSession } from "@/lib/session";
 import { ObjectId } from "mongodb";
 
 export async function PUT(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
 
     // Parse the request body
     const body = await req.json();
@@ -54,8 +59,13 @@ export async function PUT(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
     const allOrders = await db.collection("Orders").find().toArray();
 
     return NextResponse.json({ data: allOrders }, { status: 200 });

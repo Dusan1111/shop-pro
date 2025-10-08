@@ -4,15 +4,15 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const uri = isDev
-  ? process.env.MONGODB_URI_DEV
-  : process.env.MONGODB_URI_PROD;
+const uri = isDev ? process.env.MONGODB_URI_DEV : process.env.MONGODB_URI_PROD;
 
-const dbName = isDev
-  ? process.env.MONGODB_DB_DEV
-  : process.env.MONGODB_DB_PROD;
+// const dbName = isDev ? process.env.MONGODB_DB_DEV : process.env.MONGODB_DB_PROD;
 
-if (!uri || !dbName) {
+const settingsDbName = isDev
+  ? process.env.MONGODB_SETTINGS_DB_DEV
+  : process.env.MONGODB_SETTINGS_DB_PROD;
+
+if (!uri || !settingsDbName) {
   throw new Error("MongoDB URI or DB name is not defined");
 }
 
@@ -46,4 +46,10 @@ if (isDev) {
   clientPromise = client.connect();
 }
 
-export { clientPromise, dbName };
+// Helper function to get database connection for a specific user
+export async function getUserDb(userDbName: string) {
+  const client = await clientPromise;
+  return client.db(userDbName);
+}
+
+export { clientPromise, settingsDbName };

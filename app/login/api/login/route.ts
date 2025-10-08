@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loginSchema } from '@/lib/validation';
 import { verifyPassword } from '@/lib/auth';
-import { clientPromise, dbName } from '@/lib/mongodb';
+import { clientPromise, settingsDbName } from '@/lib/mongodb';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 
@@ -19,14 +19,48 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = parsed.data;
     const client = await clientPromise;
-    const db = client.db(dbName);
-    const user = await db.collection('Users').findOne({ email }) as any;
-    
-    if (!user || user.password !== password) {
+    const settingsDb = client.db(settingsDbName);
+    const user = await settingsDb.collection('Users').findOne({ email }) as any;
+
+    if (!user) {
+      return NextResponse.json({ error: 'Korisničko ime ili lozinka nisu validni!'}, { status: 401 });
+    }
+    // Verify password using bcrypt
+    const isPasswordValid = await verifyPassword(password, user.password);
+
+    if (!isPasswordValid) {
       return NextResponse.json({ error: 'Korisničko ime ili lozinka nisu validni!'}, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+    // Check if user is super admin (no tenantId)
+    if (!user.tenantId) {
+      // Super admin - use settings database
+      const token = jwt.sign({
+        userId: user._id,
+        isSuperAdmin: true,
+        dbName: settingsDbName
+      }, JWT_SECRET, { expiresIn: '7d' });
+
+      const cookie = serialize('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+      });
+
+      const response = NextResponse.json({ message: 'Uspešno logovanje!' });
+      response.headers.set('Set-Cookie', cookie);
+      return response;
+    }
+
+    // Regular user - lookup tenant by tenantId to get dbName
+    const tenant = await settingsDb.collection('Tenants').findOne({ _id: user.tenantId }) as any;
+    if (!tenant || !tenant.dbName) {
+      return NextResponse.json({ error: 'Ne postoji baza podataka za datu kompaniju'}, { status: 500 });
+    }
+
+    const token = jwt.sign({ userId: user._id, tenantId: user.tenantId, dbName: tenant.dbName }, JWT_SECRET, { expiresIn: '7d' });
     const cookie = serialize('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

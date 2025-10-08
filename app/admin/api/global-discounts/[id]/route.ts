@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { clientPromise, dbName } from "@/lib/mongodb";
+import { getUserDbFromSession } from "@/lib/session";
 import { ObjectId } from "mongodb";
 
 export async function GET(
@@ -7,8 +7,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
 
     const program = await db.collection("GlobalDiscounts").findOne({
       _id: new ObjectId(params.id),

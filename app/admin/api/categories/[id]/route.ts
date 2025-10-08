@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
-import { clientPromise, dbName } from "@/lib/mongodb";
+import { getUserDbFromSession } from "@/lib/session";
 
 export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
@@ -10,8 +10,13 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
             return NextResponse.json({ status: 400, message: "Nevalidan ID za kategoriju!" }, { status: 400 });
         }
 
-        const client = await clientPromise;
-        const db = client.db(dbName);
+        const session = await getUserDbFromSession();
+
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { db } = session;
 
         const category = await db.collection("Categories").findOne({
             _id: new ObjectId(id),

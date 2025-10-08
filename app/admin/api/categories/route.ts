@@ -1,12 +1,17 @@
 // app/api/companies/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { clientPromise, dbName } from "@/lib/mongodb";
+import { getUserDbFromSession } from "@/lib/session";
 import { ObjectId } from "mongodb";
 
 export async function GET(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
     const allCategories = await db.collection("Categories")
       .find({ isDeleted: false })
       .toArray();
@@ -19,8 +24,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
 
     // Parse the request body
     const body = await req.json();
@@ -62,8 +72,13 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
 
     // Extract the category ID from the request URL
     const { searchParams } = new URL(req.url);
@@ -104,8 +119,13 @@ export async function DELETE(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const client = await clientPromise;
-    const db = client.db(dbName);
+    const session = await getUserDbFromSession();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { db } = session;
 
     // Parse the request body
     const body = await req.json();
