@@ -154,6 +154,24 @@
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid var(--border-color);
+  cursor: grab;
+  transition: all 0.2s ease;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    cursor: grabbing;
+  }
+
+  &.dragOver {
+    border: 2px dashed var(--primary);
+    background-color: rgba(37, 99, 235, 0.05);
+    transform: scale(1.05);
+  }
 
   img {
     width: 100%;
@@ -176,6 +194,7 @@
     font-size: 12px;
     padding: 0;
     cursor: pointer;
+    z-index: 10;
 
     @media (max-width: 480px) {
       width: 18px;

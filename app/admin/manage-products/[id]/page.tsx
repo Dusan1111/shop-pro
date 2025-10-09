@@ -37,6 +37,8 @@ export default function ProductPage() {
   const mainImageFileRef = useRef<HTMLInputElement>(null);
   const detailImageFileRef = useRef<HTMLInputElement>(null);
   const [deletedImagePaths, setDeletedImagePaths] = useState<string[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -225,6 +227,60 @@ export default function ProductPage() {
     if (detailImageFileRef.current) {
       detailImageFileRef.current.click();
     }
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    // Create a combined array with flags to track original type
+    const combinedImages = [
+      ...productImages.map(img => ({ path: img, isExisting: true })),
+      ...detailImagePreviews.map(img => ({ path: img, isExisting: false }))
+    ];
+
+    // Reorder the combined array
+    const reorderedImages = [...combinedImages];
+    const [movedImage] = reorderedImages.splice(draggedIndex, 1);
+    reorderedImages.splice(dropIndex, 0, movedImage);
+
+    // Separate back based on type
+    const existingImages = reorderedImages
+      .filter(img => img.isExisting)
+      .map(img => img.path);
+
+    const previewImages = reorderedImages
+      .filter(img => !img.isExisting)
+      .map(img => img.path);
+
+    setProductImages(existingImages);
+    setDetailImagePreviews(previewImages);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
   
   if (loading) {
@@ -451,16 +507,25 @@ export default function ProductPage() {
 
         {/* Detail Images */}
         <div className={styles.detailImagesSection}>
-          <div>Slike detalja</div>
+          <div>Slike detalja <span style={{ fontSize: '12px', color: '#6b7280' }}>(prevucite da promenite redosled)</span></div>
           <div className={styles.imagesWrapper}>
             {[...productImages.map((img) => `${BLOB_URL}/${img}`), ...detailImagePreviews].map(
               (src, index) => {
                 return (
-                  <div key={index} className={styles.imageContainer}>
+                  <div
+                    key={index}
+                    className={`${styles.imageContainer} ${draggedIndex === index ? styles.dragging : ''} ${dragOverIndex === index ? styles.dragOver : ''}`}
+                    draggable={!actionLoading}
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                  >
                     <img
                       src={src}
                       alt="Preview"
-                      style={{ width: "100px" }}
+                      style={{ width: "100px", pointerEvents: 'none' }}
                     />
                     <button
                       type="button"
