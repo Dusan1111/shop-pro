@@ -70,7 +70,7 @@ export default function Navbar() {
               height={40}
               className={styles.logoImage}
             />
-            <span>Sany Swings</span>
+            <span>Shop Wizard</span>
           </Link>
 
           <div

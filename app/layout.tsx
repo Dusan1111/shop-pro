@@ -10,8 +10,8 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Admin Panel",
-  description: "E-commerce Admin Panel",
+  title: "Shop Wizard",
+  description: "Shop Wizard - Your Ultimate E-commerce Admin Panel",
 };
 
 export default function RootLayout({

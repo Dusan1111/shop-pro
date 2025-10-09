@@ -12,7 +12,9 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:tanstack.com)",
       "Bash(npm run build:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(ren:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

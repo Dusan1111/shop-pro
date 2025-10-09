@@ -1,4 +1,4 @@
-# E-commerce Admin Panel
+# E-commerce Shop Wizard
 
 An admin panel for managing e-commerce operations including products, categories, orders, attributes, and global discounts.
 

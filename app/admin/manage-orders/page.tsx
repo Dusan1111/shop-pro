@@ -38,31 +38,40 @@ export default function ManageOrdersPage() {
   }, []);
 
 
-  // Function to get the color for a status
-  const getStatusColor = (status: string) => {
+  // Function to get the styling for a status
+  const getStatusStyle = (status: string) => {
     switch (status) {
       case "U pripremi":
-        return "orange";
+        return { backgroundColor: '#fff3cd', color: '#856404' };
       case "Poslata":
-        return "blue";
+        return { backgroundColor: '#cfe2ff', color: '#084298' };
       case "Dostavljena":
-        return "green";
+        return { backgroundColor: '#d4edda', color: '#155724' };
       case "Otkazana":
-        return "red";
+        return { backgroundColor: '#f8d7da', color: '#721c24' };
       default:
-        return "black";
+        return { backgroundColor: '#e2e3e5', color: '#383d41' };
     }
   };
+
   const customRenderers = {
     orderTime: (order: any) => {
       const date = new Date(order.orderTime);
       return <span>{isNaN(date.getTime()) ? '-' : date.toLocaleString()}</span>;
     },
     total: (order: any) => (
-      <span style={{ color: getStatusColor(order.total) }}>{order.total.toFixed(2)} RSD</span>
+      <span>{order.total.toFixed(2)} RSD</span>
     ),
     status: (order: any) => (
-      <span style={{ color: getStatusColor(order.status) }}>{order.status}</span>
+      <span style={{
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 500,
+        ...getStatusStyle(order.status)
+      }}>
+        {order.status}
+      </span>
     )
   };
   return (
