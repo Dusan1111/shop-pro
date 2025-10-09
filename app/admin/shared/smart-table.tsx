@@ -22,6 +22,15 @@ interface TableComponentProps {
   selectedRow?: string;
   onRemove?: (row: any) => any | undefined;
   customRenderers?: { [key: string]: (row: any) => React.ReactNode };
+  // Backend pagination props
+  useBackendPagination?: boolean;
+  totalCount?: number;
+  currentPage?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSearchChange?: (search: string) => void;
+  isLoading?: boolean;
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({
@@ -32,6 +41,14 @@ const TableComponent: React.FC<TableComponentProps> = ({
   selectedRow,
   onRemove = () => { },
   customRenderers = {},
+  useBackendPagination = false,
+  totalCount = 0,
+  currentPage = 0,
+  pageSize = 10,
+  onPageChange,
+  onPageSizeChange,
+  onSearchChange,
+  isLoading = false,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -81,15 +98,19 @@ const TableComponent: React.FC<TableComponentProps> = ({
     }));
   }, [columnKeys, columns, customRenderers, searchQuery]);
 
-  // Filter data based on search query
+  // Filter data based on search query (only for client-side pagination)
   const filteredData = useMemo(() => {
+    if (useBackendPagination) return data;
     if (!searchQuery) return data;
     return data.filter((item) =>
       String(item[columnKeys[0]])
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     );
-  }, [data, searchQuery, columnKeys]);
+  }, [data, searchQuery, columnKeys, useBackendPagination]);
+
+  // Calculate total pages for backend pagination
+  const totalPages = useBackendPagination ? Math.ceil(totalCount / pageSize) : 0;
 
   // Create table instance
   const table = useReactTable({
@@ -101,10 +122,13 @@ const TableComponent: React.FC<TableComponentProps> = ({
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: useBackendPagination ? undefined : getPaginationRowModel(),
+    manualPagination: useBackendPagination,
+    pageCount: useBackendPagination ? totalPages : undefined,
     initialState: {
       pagination: {
-        pageSize: 10,
+        pageSize: useBackendPagination ? pageSize : 10,
+        pageIndex: useBackendPagination ? currentPage : 0,
       },
     },
   });
@@ -130,9 +154,14 @@ const TableComponent: React.FC<TableComponentProps> = ({
                         className="headerSearch"
                         value={searchQuery}
                         onChange={(e) => {
-                          setLoading(true);
-                          setSearchQuery(e.target.value);
-                          setTimeout(() => setLoading(false), 300);
+                          const value = e.target.value;
+                          setSearchQuery(value);
+                          if (useBackendPagination && onSearchChange) {
+                            onSearchChange(value);
+                          } else {
+                            setLoading(true);
+                            setTimeout(() => setLoading(false), 300);
+                          }
                         }}
                         placeholder={`Pretraži po ${header.column.columnDef.header}`}
                       />
@@ -159,12 +188,28 @@ const TableComponent: React.FC<TableComponentProps> = ({
           ))}
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={columns.length + (onRemove.length > 0 ? 1 : 0)} className="loadingOverlay">
-                <div className="spinner"></div>
-              </td>
-            </tr>
+          {(loading || isLoading) ? (
+            // Render skeleton rows
+            Array.from({ length: useBackendPagination ? pageSize : 5 }).map((_, rowIndex) => (
+              <tr key={`skeleton-${rowIndex}`} className="skeletonRow">
+                {columnKeys.map((_, colIndex) => (
+                  <td key={`skeleton-${rowIndex}-${colIndex}`}>
+                    <div
+                      className={`skeletonCell ${
+                        colIndex % 3 === 0 ? 'skeletonCellShort' :
+                        colIndex % 3 === 1 ? 'skeletonCellMedium' :
+                        'skeletonCellLong'
+                      }`}
+                    />
+                  </td>
+                ))}
+                {onRemove.length > 0 && (
+                  <td>
+                    <div className="skeletonCell skeletonCellShort" />
+                  </td>
+                )}
+              </tr>
+            ))
           ) : (
             table.getRowModel().rows.map((row) => (
               <tr
@@ -194,24 +239,42 @@ const TableComponent: React.FC<TableComponentProps> = ({
         <div className="pagination">
           <button
             className="activePage"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              if (useBackendPagination && onPageChange) {
+                onPageChange(currentPage - 1);
+              } else {
+                table.previousPage();
+              }
+            }}
+            disabled={useBackendPagination ? currentPage === 0 : !table.getCanPreviousPage()}
           >
             Prethodna
           </button>
-          {Array.from({ length: table.getPageCount() }, (_, index) => (
+          {Array.from({ length: useBackendPagination ? totalPages : table.getPageCount() }, (_, index) => (
             <button
               key={index + 1}
-              onClick={() => table.setPageIndex(index)}
-              className={table.getState().pagination.pageIndex === index ? "activePage" : "currentPage"}
+              onClick={() => {
+                if (useBackendPagination && onPageChange) {
+                  onPageChange(index);
+                } else {
+                  table.setPageIndex(index);
+                }
+              }}
+              className={(useBackendPagination ? currentPage : table.getState().pagination.pageIndex) === index ? "activePage" : "currentPage"}
             >
               {index + 1}
             </button>
           ))}
           <button
             className="activePage"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              if (useBackendPagination && onPageChange) {
+                onPageChange(currentPage + 1);
+              } else {
+                table.nextPage();
+              }
+            }}
+            disabled={useBackendPagination ? currentPage >= totalPages - 1 : !table.getCanNextPage()}
           >
             Sledeća
           </button>
@@ -220,11 +283,16 @@ const TableComponent: React.FC<TableComponentProps> = ({
           <span className="rowsPerLabel">Redova po stranici: </span>
           <select
             id="rowsPerPage"
-            value={table.getState().pagination.pageSize}
+            value={useBackendPagination ? pageSize : table.getState().pagination.pageSize}
             onChange={(e) => {
-              setLoading(true);
-              table.setPageSize(Number(e.target.value));
-              setTimeout(() => setLoading(false), 300);
+              const newSize = Number(e.target.value);
+              if (useBackendPagination && onPageSizeChange) {
+                onPageSizeChange(newSize);
+              } else {
+                setLoading(true);
+                table.setPageSize(newSize);
+                setTimeout(() => setLoading(false), 300);
+              }
             }}
           >
             <option value={5}>5</option>

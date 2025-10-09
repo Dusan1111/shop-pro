@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "./manage-orders.module.scss";
 import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
@@ -17,25 +17,40 @@ export default function ManageOrdersPage() {
   }
 
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch("api/orders", { method: "GET" });
-        const data = await response.json();
-        if (response.ok) {
-          setOrders(data.data);
-        } else {
-          console.error("Error fetching orders:", data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        pageSize: pageSize.toString(),
+        search: searchQuery
+      });
 
+      const response = await fetch(`api/orders?${params}`, { method: "GET" });
+      const data = await response.json();
+      if (response.ok) {
+        setOrders(data.data);
+        setTotalCount(data.totalCount);
+      } else {
+        console.error("Error fetching orders:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, searchQuery]);
+
+  useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [fetchOrders]);
 
 
   // Function to get the styling for a status
@@ -83,12 +98,26 @@ export default function ManageOrdersPage() {
         <div className={styles.manageOrdersPage}>
           <TableComponent
             data={orders}
-            columns={["ID", "Vreme", "Korisnik", "Email", "Telefon", "Total", "Status"]} // Pass column names here
-            columnKeys={["_id", "orderTime", "user", "userEmail", "userPhone", "total", "status"]} // Pass column names here
+            columns={["ID", "Vreme", "Korisnik", "Email", "Telefon", "Total", "Status"]}
+            columnKeys={["_id", "orderTime", "user", "userEmail", "userPhone", "total", "status"]}
             customRenderers={customRenderers}
             onRowClick={(category) => router.push(`/admin/manage-orders/${category._id}`)}
             selectedRow={""}
             onRemove={undefined}
+            useBackendPagination={true}
+            totalCount={totalCount}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(0);
+            }}
+            onSearchChange={(search) => {
+              setSearchQuery(search);
+              setCurrentPage(0);
+            }}
+            isLoading={loading}
           />
         </div>
       </div>

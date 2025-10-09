@@ -66,9 +66,64 @@ export async function GET(req: NextRequest) {
     }
 
     const { db } = session;
-    const allOrders = await db.collection("Orders").find().toArray();
+    const { searchParams } = new URL(req.url);
 
-    return NextResponse.json({ data: allOrders }, { status: 200 });
+    // Get pagination parameters
+    const page = parseInt(searchParams.get('page') || '0');
+    const pageSize = parseInt(searchParams.get('pageSize') || '10');
+    const search = searchParams.get('search') || '';
+
+    // Build filter query - search by Order ID only
+    const filter: any = {};
+    if (search) {
+      // Check if search is a valid ObjectId (full match)
+      if (ObjectId.isValid(search) && search.length === 24) {
+        filter._id = new ObjectId(search);
+      } else if (search.length > 0) {
+        // For partial matches, get all orders and filter by string representation
+        // This will be handled after fetching
+      }
+    }
+
+    // For partial ObjectId search, we need to fetch all and filter
+    if (search && search.length > 0 && search.length < 24) {
+      // Fetch all orders and filter by string representation of _id
+      const allOrders = await db.collection("Orders")
+        .find({})
+        .sort({ orderTime: -1 })
+        .toArray();
+      const filteredOrders = allOrders.filter(order =>
+        order._id.toString().toLowerCase().includes(search.toLowerCase())
+      );
+
+      const totalCount = filteredOrders.length;
+      const paginatedOrders = filteredOrders.slice(page * pageSize, (page + 1) * pageSize);
+
+      return NextResponse.json({
+        data: paginatedOrders,
+        totalCount,
+        page,
+        pageSize
+      }, { status: 200 });
+    }
+
+    // Get total count for exact match or no search
+    const totalCount = await db.collection("Orders").countDocuments(filter);
+
+    // Get paginated data - sorted by newest first
+    const allOrders = await db.collection("Orders")
+      .find(filter)
+      .sort({ orderTime: -1 })
+      .skip(page * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    return NextResponse.json({
+      data: allOrders,
+      totalCount,
+      page,
+      pageSize
+    }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Unknown error" },

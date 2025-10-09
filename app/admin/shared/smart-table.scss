@@ -216,6 +216,52 @@ th {
   z-index: 10;
 }
 
+.skeletonRow {
+  cursor: default !important;
+  border-bottom: 1px solid #f3f4f6;
+
+  td {
+    padding: 2px 16px !important;
+  }
+
+  &:hover {
+    background-color: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
+    color: #374151 !important;
+  }
+}
+
+.skeletonCell {
+  height: 14px;
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s ease-in-out infinite;
+  margin: 8px 0;
+}
+
+.skeletonCellShort {
+  width: 60%;
+}
+
+.skeletonCellMedium {
+  width: 80%;
+}
+
+.skeletonCellLong {
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .currentPage {
   color: var(--primary);
 }
