@@ -1,6 +1,7 @@
 .multiSelect {
   position: relative;
   width: 100%;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 .selectButton {
@@ -34,6 +35,7 @@
 .placeholder {
   color: var(--muted-foreground);
   font-style: italic;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 .tags {
@@ -52,6 +54,7 @@
   border-radius: 4px;
   font-size: 14px;
   max-width: 200px;
+  font-family: 'Cinzel Decorative', cursive;
 
   span {
     white-space: nowrap;
@@ -125,6 +128,7 @@
   border-radius: 4px;
   background-color: var(--input);
   font-size: 14px;
+  font-family: 'Cinzel Decorative', cursive;
 
   &:focus {
     outline: none;
@@ -144,6 +148,7 @@
   padding: 10px 12px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-family: 'Cinzel Decorative', cursive;
 
   &:hover {
     background-color: var(--muted);
@@ -170,6 +175,7 @@
   text-align: center;
   color: var(--muted-foreground);
   font-style: italic;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 // Mobile responsive

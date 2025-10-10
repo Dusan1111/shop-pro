@@ -36,6 +36,7 @@
     z-index: 101;
     position: relative;
     flex-shrink: 0;
+    font-family: 'Cinzel Decorative', cursive;
 
     .logoImage {
       flex-shrink: 0;
@@ -68,6 +69,7 @@
     background-color: #DBEAFE;
     border: 2px solid var(--primary);
     border-radius: 8px;
+    font-family: 'Cinzel Decorative', cursive;
 
     @media (max-width: 768px) {
       display: none;
@@ -82,6 +84,7 @@
     a {
       font-weight: 500;
       transition: color 0.2s ease;
+      font-family: 'Cinzel Decorative', cursive;
 
       &:hover {
         color: var(--primary);

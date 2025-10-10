@@ -5,6 +5,7 @@ th {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 .tableContainer {
@@ -32,6 +33,7 @@ th {
   padding: 2px 16px;
   text-align: left;
   font-size: 14px;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 .table th:first-child {
@@ -47,6 +49,7 @@ th {
   align-items: center;
   font-size: 14px;
   color: #6b7280;
+  font-family: 'Cinzel Decorative', cursive;
 }
 
 .table tr {
@@ -109,6 +112,7 @@ th {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
+  font-family: 'Cinzel Decorative', cursive;
 
   &:hover:not(:disabled) {
     background-color: #f3f4f6;
@@ -149,6 +153,7 @@ th {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: 'Cinzel Decorative', cursive;
 
   &:hover {
     border-color: #d1d5db;
@@ -187,6 +192,7 @@ th {
   background-color: #ffffff;
   color: #374151;
   transition: all 0.2s ease;
+  font-family: 'Cinzel Decorative', cursive;
 
   &::placeholder {
     color: #9ca3af;
