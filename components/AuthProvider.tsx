@@ -8,6 +8,8 @@ interface AuthContextType {
   isSuperAdmin: boolean;
   setIsSuperAdmin: (value: boolean) => void;
   isLoading: boolean;
+  fullName: string | null;
+  setFullName: (value: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   });
 
+  const [fullName, setFullNameState] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedFullName = localStorage.getItem("fullName");
+      return storedFullName;
+    }
+    return null;
+  });
+
   const [isLoading, setIsLoading] = useState(true);
 
   // Function to update state and save to local storage
@@ -51,6 +61,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setFullName = (value: string | null) => {
+    setFullNameState(value);
+    if (typeof window !== "undefined") {
+      if (value) {
+        localStorage.setItem("fullName", value);
+      } else {
+        localStorage.removeItem("fullName");
+      }
+    }
+  };
+
   // Check super admin status on mount
   useEffect(() => {
     const checkSuperAdmin = async () => {
@@ -59,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (response.ok) {
           const data = await response.json();
           setIsSuperAdmin(data.isSuperAdmin || false);
+          setFullName(data.fullName || null);
         }
       } catch (error) {
         console.error('Error checking super admin status:', error);
@@ -71,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading }}>
+    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName }}>
       {children}
     </AuthContext.Provider>
   );

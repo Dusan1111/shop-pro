@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
         userId: user._id,
         isSuperAdmin: true,
         dbName: settingsDbName,
-        role: roleName
+        role: roleName,
+        fullName: user.fullName || user.email
       }, JWT_SECRET, { expiresIn: '7d' });
       const cookie = serialize('token', token, {
         httpOnly: true,
@@ -74,7 +75,8 @@ export async function POST(req: NextRequest) {
       userId: user._id,
       tenantId: user.tenantId,
       dbName: tenant.dbName,
-      role: roleName
+      role: roleName,
+      fullName: user.fullName || user.email
     }, JWT_SECRET, { expiresIn: '7d' });
     const cookie = serialize('token', token, {
       httpOnly: true,

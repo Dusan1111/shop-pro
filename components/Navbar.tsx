@@ -12,7 +12,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading } = useAuth();
+  const { isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -31,6 +31,7 @@ export default function Navbar() {
       // Reset admin state globally
       setIsAdmin(false);
       setIsSuperAdmin(false);
+      setFullName(null);
 
       // Close the menu
       setIsMenuOpen(false);
@@ -72,6 +73,12 @@ export default function Navbar() {
             />
             <span>Shop Wizard</span>
           </Link>
+
+          {fullName && (
+            <div className={styles.welcomeMessage}>
+              Dobrodošli, {fullName}
+            </div>
+          )}
 
           <div
             className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}

@@ -55,14 +55,34 @@
       }
     }
   }
+
+  .welcomeMessage {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--foreground);
+    white-space: nowrap;
+    padding: 8px 16px;
+    background-color: #DBEAFE;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
   
   .navLinks {
     display: flex;
     gap: 2rem;
+    align-items: center;
+
     a {
       font-weight: 500;
       transition: color 0.2s ease;
-      
+
       &:hover {
         color: var(--primary);
       }

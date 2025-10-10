@@ -22,7 +22,8 @@ export async function GET(req: NextRequest) {
       tenantId: payload.tenantId,
       dbName: payload.dbName,
       isSuperAdmin: payload.isSuperAdmin || false,
-      role: payload.role || null
+      role: payload.role || null,
+      fullName: payload.fullName || null
     });
   } catch (error) {
     console.error('Error in /api/auth/me:', error);
