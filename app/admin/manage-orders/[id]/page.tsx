@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./create-order.module.scss";
-import { ToastContainer, toast } from "react-toastify";
-import RemoveButton from "../../shared/remove-button";
+import { toast } from "react-toastify";
 
 const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL;
 
@@ -15,21 +14,7 @@ export default function EditOrderPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Function to get the color for a status
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "U pripremi":
-        return "orange";
-      case "Poslata":
-        return "blue";
-      case "Dostavljena":
-        return "green";
-      case "Otkazana":
-        return "red";
-      default:
-        return "black";
-    }
-  };
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -67,23 +52,6 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
   });
 };
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const res = await fetch(`../api/orders/${params.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: order.orderItems }),
-      });
-      if (!res.ok) throw new Error();
-      toast.success("Porudžbina sačuvana!");
-    } catch {
-      toast.error("Greška prilikom čuvanja porudžbine.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleUpdateStatus = async (id: string, status: string) => {
     try {
       const response = await fetch("../api/orders", {
@@ -109,18 +77,6 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
     }
   };
 
-const handleRemoveItem = (itemIndex: number) => {
-  setOrder((prev: any) => {
-    const updatedOrderItems = prev.orderItems.filter((_: any, idx: number) => idx !== itemIndex);
-    const newTotal = updatedOrderItems.reduce(
-      (sum: number, item: any) =>
-        sum + (item.subtotal || (item.quantity * (item.product?.salePrice || item.product?.price || 0))),
-      0
-    );
-    return { ...prev, orderItems: updatedOrderItems, total: newTotal };
-  });
-};
-
   if (loading) {
     return (
       <><div className="page-title">
@@ -141,6 +97,22 @@ const handleRemoveItem = (itemIndex: number) => {
             <div className={styles.skeletonText}></div>
           </div>
           <div className={styles.orderInfoRow}>
+            <b className={styles.label}>Adresa:</b>
+            <div className={styles.skeletonText}></div>
+          </div>
+          <div className={styles.orderInfoRow}>
+            <b className={styles.label}>Grad:</b>
+            <div className={styles.skeletonText}></div>
+          </div>
+          <div className={styles.orderInfoRow}>
+            <b className={styles.label}>Poštanski kod:</b>
+            <div className={styles.skeletonText}></div>
+          </div>
+          <div className={styles.orderInfoRow}>
+            <b className={styles.label}>Dostava:</b>
+            <div className={styles.skeletonText}></div>
+          </div>
+          <div className={styles.orderInfoRow}>
             <b className={styles.label}>Status:</b>
             <div className={styles.skeletonSelect}></div>
           </div>
@@ -157,7 +129,6 @@ const handleRemoveItem = (itemIndex: number) => {
                 <th>Plaćeno</th>
                 <th>Cena</th>
                 <th>Ukupno</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -169,7 +140,6 @@ const handleRemoveItem = (itemIndex: number) => {
                   <td><div className={styles.skeletonText}></div></td>
                   <td><div className={styles.skeletonText}></div></td>
                   <td><div className={styles.skeletonText}></div></td>
-                  <td><div className={styles.skeletonButton}></div></td>
                 </tr>
               ))}
             </tbody>
@@ -191,31 +161,34 @@ const handleRemoveItem = (itemIndex: number) => {
       <h1>Izmeni porudžbinu</h1>
     </div><div className={styles.orderPage}>
 
-        <div className={styles.orderInfo}>
-          <div className={styles.orderInfoRow}><b className={styles.label}>ID:</b>#{order._id}</div>
-          <div className={styles.orderInfoRow}><b className={styles.label}>Ukupna cena:</b> {order.total} RSD </div>
-          <div className={styles.orderInfoRow}><b className={styles.label}>Kupac:</b>{order.user}</div>
-          <div className={styles.orderInfoRow}><b className={styles.label}>Status:</b> <select
-            value={order.status}
-            onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
-          >
-            <option value="U pripremi" style={{ color: 'orange' }}>
-              U pripremi
-            </option>
-            <option value="Poslata" style={{ color: 'blue' }}>
-              Poslata
-            </option>
-            <option value="Dostavljena" style={{ color: 'green' }}>
-              Dostavljena
-            </option>
-            <option value="Otkazana" style={{ color: 'red' }}>
-              Otkazana
-            </option>
-          </select></div>
-          {/* Add more order info as needed */}
-        </div>
-        <h2>Stavke porudžbine</h2>
-        <div className={styles.tableWrapper}> 
+        <div className={styles.layoutColumns}>
+          <div className={styles.orderInfo}>
+            <div className={styles.orderInfoRow}><b className={styles.label}>ID:</b>#{order._id}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Ukupna cena:</b> {order.total} RSD </div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Kupac:</b>{order.user}</div>
+            {order.address && <div className={styles.orderInfoRow}><b className={styles.label}>Adresa:</b>{order.address}</div>}
+            {order.city && <div className={styles.orderInfoRow}><b className={styles.label}>Grad:</b>{order.city}</div>}
+            {order.postalCode && <div className={styles.orderInfoRow}><b className={styles.label}>Poštanski kod:</b>{order.postalCode}</div>}
+            {order.shipping !== undefined && <div className={styles.orderInfoRow}><b className={styles.label}>Dostava:</b>{order.shipping === 0 ? 'Besplatno' : `${order.shipping} RSD`}</div>}
+            <div className={styles.orderInfoRow}><b className={styles.label}>Status:</b> <select
+              value={order.status}
+              onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
+            >
+              <option value="U pripremi" style={{ color: 'orange' }}>
+                U pripremi
+              </option>
+              <option value="Poslata" style={{ color: 'blue' }}>
+                Poslata
+              </option>
+              <option value="Otkazana" style={{ color: 'red' }}>
+                Otkazana
+              </option>
+            </select></div>
+          </div>
+
+          <div className={styles.rightColumn}>
+            <h2>Stavke porudžbine</h2>
+            <div className={styles.tableWrapper}> 
         <table className={styles.orderTable}>
           <thead>
             <tr>
@@ -225,7 +198,6 @@ const handleRemoveItem = (itemIndex: number) => {
               <th>Plaćeno</th>
               <th>Cena</th>
               <th>Ukupno</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -249,7 +221,8 @@ const handleRemoveItem = (itemIndex: number) => {
                     value={item.quantity}
                     onChange={e => handleQuantityChange(idx, Number(e.target.value))}
                     style={{ width: 60 }}
-                    disabled={saving} />
+                    disabled={saving}
+                    readOnly />
                 </td>
                   <td>
                    {Number(item.subtotal / item.quantity).toFixed(0)} RSD
@@ -260,22 +233,18 @@ const handleRemoveItem = (itemIndex: number) => {
                 <td>
                    {(item.subtotal).toFixed(0)} RSD
                 </td>
-                <td>
-                  <RemoveButton remove={() => handleRemoveItem(idx)} content={"Obriši"} />
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
         </div>
+          </div>
+        </div>
+
         <div className={"actions"}>
           <button onClick={() => router.push("/admin/manage-orders")} disabled={saving}>
             Nazad
           </button>
-          <button className="save" onClick={handleSave} disabled={saving}>
-            {saving ? "Čuvanje..." : "Sačuvaj izmene"}
-          </button>
-
         </div>
       </div></>
   );
