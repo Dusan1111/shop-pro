@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { name, dbName, description } = body;
+    const { name, dbName, description, gmailUser, gmailAppPassword } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
       name,
       dbName,
       description,
+      gmailUser: gmailUser || null,
+      gmailAppPassword: gmailAppPassword || null,
       isDeleted: false,
       createdAt: new Date(),
     };
@@ -108,7 +110,7 @@ export async function PUT(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { id, name, dbName, description } = body;
+    const { id, name, dbName, description, gmailUser, gmailAppPassword } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -131,9 +133,24 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    const updateData: any = {
+      name,
+      dbName,
+      description,
+      updatedAt: new Date()
+    };
+
+    // Only update Gmail credentials if provided
+    if (gmailUser !== undefined) {
+      updateData.gmailUser = gmailUser;
+    }
+    if (gmailAppPassword !== undefined) {
+      updateData.gmailAppPassword = gmailAppPassword;
+    }
+
     const result = await db.collection("Tenants").updateOne(
       { _id: new ObjectId(id) },
-      { $set: { name, dbName, description, updatedAt: new Date() } }
+      { $set: updateData }
     );
 
     if (result.matchedCount === 0) {

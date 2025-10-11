@@ -97,6 +97,10 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
             <div className={styles.skeletonText}></div>
           </div>
           <div className={styles.orderInfoRow}>
+            <b className={styles.label}>Email kupca:</b>
+            <div className={styles.skeletonText}></div>
+          </div>
+          <div className={styles.orderInfoRow}>
             <b className={styles.label}>Adresa:</b>
             <div className={styles.skeletonText}></div>
           </div>
@@ -166,6 +170,7 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
             <div className={styles.orderInfoRow}><b className={styles.label}>ID:</b>#{order._id}</div>
             <div className={styles.orderInfoRow}><b className={styles.label}>Ukupna cena:</b> {order.total} RSD </div>
             <div className={styles.orderInfoRow}><b className={styles.label}>Kupac:</b>{order.user}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Email kupca:</b>{order.userEmail}</div>
             {order.address && <div className={styles.orderInfoRow}><b className={styles.label}>Adresa:</b>{order.address}</div>}
             {order.city && <div className={styles.orderInfoRow}><b className={styles.label}>Grad:</b>{order.city}</div>}
             {order.postalCode && <div className={styles.orderInfoRow}><b className={styles.label}>Poštanski kod:</b>{order.postalCode}</div>}
