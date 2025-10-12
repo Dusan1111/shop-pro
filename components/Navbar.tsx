@@ -58,7 +58,12 @@ export default function Navbar() {
   };
 
   if (isLoading) {
-    return;
+    return null;
+  }
+
+  // Hide navbar on login page
+  if (pathname === "/login") {
+    return null;
   }
 
   return (

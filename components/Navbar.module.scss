@@ -23,6 +23,7 @@
     @media (max-width: 768px) {
       padding: 0.55rem 0.75rem;
       min-height: 40px;
+      flex-direction: row-reverse;
     }
   }
   
@@ -37,6 +38,10 @@
     position: relative;
     flex-shrink: 0;
     letter-spacing: -0.02em;
+
+    @media (max-width: 768px) {
+      order: 1;
+    }
 
     .logoImage {
       flex-shrink: 0;
@@ -80,6 +85,9 @@
       max-width: fit-content;
       overflow: hidden;
       text-overflow: ellipsis;
+      order: 2;
+      flex: 1;
+      text-align: center;
     }
   }
   
@@ -137,7 +145,6 @@
     border: none;
     cursor: pointer;
     color: var(--foreground);
-    order: -1;
     z-index: 102;
     padding: 0.25rem;
     box-shadow: none;
@@ -145,6 +152,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      order: 3;
     }
   }
   
