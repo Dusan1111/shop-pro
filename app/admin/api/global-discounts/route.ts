@@ -41,9 +41,11 @@ export async function POST(req: NextRequest) {
       name,
       description,
       type,
+      applyTo = "global",
       minPurchaseAmount,
       discountPercentage,
       isActive = true,
+      productIds = [],
     } = body;
 
     if (!name) {
@@ -64,9 +66,11 @@ export async function POST(req: NextRequest) {
       name,
       description,
       type,
+      applyTo,
       minPurchaseAmount: minPurchaseAmount ? Number(minPurchaseAmount) : undefined,
       discountPercentage: discountPercentage ? Number(discountPercentage) : undefined,
       isActive,
+      productIds: productIds || [],
       isDeleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -75,7 +79,7 @@ export async function POST(req: NextRequest) {
     const result = await db.collection("GlobalDiscounts").insertOne(newProgram);
 
     return NextResponse.json({
-      message: "Globalni popust uspešno dodat",
+      message: "Popust uspešno dodat",
       data: { _id: result.insertedId, ...newProgram },
     }, { status: 201 });
 
@@ -122,7 +126,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Globalni popust je uspešno obrisan!",
+      message: "Popust je uspešno obrisan!",
     });
   } catch (error) {
     console.error("Greška prilikom brisanja globalnog popusta!", error);
@@ -149,9 +153,11 @@ export async function PUT(req: NextRequest) {
       name,
       description,
       type,
+      applyTo,
       minPurchaseAmount,
       discountPercentage,
       isActive,
+      productIds = [],
     } = body;
 
     if (!id) {
@@ -179,9 +185,11 @@ export async function PUT(req: NextRequest) {
       name,
       description,
       type,
+      applyTo,
       minPurchaseAmount: minPurchaseAmount ? Number(minPurchaseAmount) : undefined,
       discountPercentage: discountPercentage ? Number(discountPercentage) : undefined,
       isActive,
+      productIds: productIds || [],
       updatedAt: new Date(),
     };
 
@@ -192,14 +200,14 @@ export async function PUT(req: NextRequest) {
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
-        { status: 404, message: "Globalni popust nije pronađen!" },
+        { status: 404, message: "Popust nije pronađen!" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       status: 200,
-      message: "Globalni popust je uspešno izmenjen.",
+      message: "Popust je uspešno ažuriran.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene globalnog popusta!", error);

@@ -158,7 +158,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Atribut je uspešno izmenjen.",
+      message: "Atribut je uspešno ažuriran.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene atributa!", error);

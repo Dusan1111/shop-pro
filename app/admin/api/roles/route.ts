@@ -131,7 +131,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Rola je uspešno izmenjena.",
+      message: "Rola je uspešno ažurirana.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene role!", error);

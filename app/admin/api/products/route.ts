@@ -249,7 +249,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Proizvod je uspešno izmenjen.",
+      message: "Proizvod je uspešno ažuriran.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene kategorije!", error);

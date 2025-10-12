@@ -203,7 +203,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Vrednost atributa je uspešno izmenjena.",
+      message: "Vrednost atributa je uspešno ažurirana.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene vrednosti atributa!", error);

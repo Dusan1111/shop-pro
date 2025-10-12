@@ -6,13 +6,14 @@ import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
 
 export default function PopustiPage() {
-  const [activeTab, setActiveTab] = useState<'global-discounts'>('global-discounts');
+  const [activeTab, setActiveTab] = useState<'global-discounts' | 'vouchers'>('global-discounts');
 
   interface GlobalDiscount {
     _id: string;
     name: string;
     description: string;
     type: string;
+    applyTo: string;
     minPurchaseAmount?: number;
     discountPercentage?: number;
     isActive: boolean;
@@ -97,9 +98,22 @@ export default function PopustiPage() {
         {program.isActive ? 'Aktivan' : 'Neaktivan'}
       </span>
     ),
-    discountPercentage: (program: GlobalDiscount) => (
-      program.discountPercentage ? `${program.discountPercentage}%` : 'N/A'
-    ),
+    type: (program: GlobalDiscount) => {
+      if (program.type === 'freeShipping') return 'Besplatna dostava';
+      if (program.type === 'percentage') return 'Procenat popusta';
+      if (program.type === 'fixed') return 'Fiksni popust';
+      return program.type;
+    },
+    applyTo: (program: GlobalDiscount) => {
+      if (program.applyTo === 'specific') return 'Pojedinačni proizvod';
+      if (program.applyTo === 'global') return 'Globalni';
+      return program.applyTo || 'Globalni';
+    },
+    discountPercentage: (program: GlobalDiscount) => {
+      if (!program.discountPercentage) return 'N/A';
+      if (program.type === 'fixed') return `${program.discountPercentage} RSD`;
+      return `${program.discountPercentage}%`;
+    },
     minPurchaseAmount: (program: GlobalDiscount) => (
       program.minPurchaseAmount ? `${program.minPurchaseAmount} RSD` : 'N/A'
     ),
@@ -119,7 +133,13 @@ export default function PopustiPage() {
               className={`${styles.tabButton} ${activeTab === 'global-discounts' ? styles.active : ''}`}
               onClick={() => setActiveTab('global-discounts')}
             >
-              Globalni popusti
+              Popusti
+            </button>
+            <button
+              className={`${styles.tabButton} ${activeTab === 'vouchers' ? styles.active : ''}`}
+              onClick={() => setActiveTab('vouchers')}
+            >
+              Vaučeri
             </button>
           </div>
 
@@ -132,7 +152,7 @@ export default function PopustiPage() {
                   onClick={() => router.push(`/admin/manage-global-discounts/new`)}
                   disabled={actionLoading}
                 >
-                  {actionLoading ? "Učitavanje..." : "Dodaj globalni popust"}
+                  {actionLoading ? "Učitavanje..." : "Dodaj popust"}
                 </button>
 
                 {loading ? (
@@ -140,8 +160,8 @@ export default function PopustiPage() {
                 ) : (
                   <TableComponent
                     data={globalDiscounts}
-                    columns={["ID", "Naziv", "Tip", "Min. iznos", "Popust", "Status", ""]}
-                    columnKeys={["_id", "name", "type", "minPurchaseAmount", "discountPercentage", "isActive"]}
+                    columns={["ID", "Naziv", "Tip", "Namena", "Min. iznos", "Popust", "Status", ""]}
+                    columnKeys={["_id", "name", "type", "applyTo", "minPurchaseAmount", "discountPercentage", "isActive"]}
                     onRowClick={(program) => router.push(`/admin/manage-global-discounts/${program._id}`)}
                     onRemove={(program: GlobalDiscount) => {
                       setProgramToDelete(program._id);
@@ -149,6 +169,24 @@ export default function PopustiPage() {
                     }}
                     customRenderers={customRenderers}
                   />
+                )}
+              </>
+            )}
+
+            {activeTab === 'vouchers' && (
+              <>
+                <button
+                  className={styles.addButton}
+                  onClick={() => router.push(`/admin/manage-vouchers/new`)}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? "Učitavanje..." : "Dodaj vaučer"}
+                </button>
+
+                {loading ? (
+                  <p>Učitavanje vaučera...</p>
+                ) : (
+                  <p>Vaučeri funkcionalnost dolazi uskoro...</p>
                 )}
               </>
             )}
@@ -162,7 +200,7 @@ export default function PopustiPage() {
               <h2>Potvrdi brisanje</h2>
               {!apiMessage ? (
                 <>
-                  <p>Da li ste sigurni da želite da obrišete ovaj globalni popust?</p>
+                  <p>Da li ste sigurni da želite da obrišete ovaj popust?</p>
                   <div className={styles.modalActions}>
                     <button onClick={() => setIsDeleting(false)} disabled={actionLoading}>
                       Nazad

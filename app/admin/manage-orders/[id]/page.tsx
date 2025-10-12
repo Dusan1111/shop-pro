@@ -68,7 +68,7 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
           ...prev,
           status,
         }));
-        toast.success("Status uspešno izmenjen!");
+        toast.success("Status uspešno ažuriran!");
       } else {
         console.error("Error updating status:", data.message);
       }

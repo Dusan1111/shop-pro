@@ -196,7 +196,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Korisnik je uspešno izmenjen.",
+      message: "Korisnik je uspešno ažuriran.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene korisnika!", error);

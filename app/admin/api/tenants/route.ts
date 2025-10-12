@@ -162,7 +162,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       status: 200,
-      message: "Firma je uspešno izmenjena.",
+      message: "Firma je uspešno ažurirana.",
     });
   } catch (error) {
     console.error("Greška prilikom izmene firme!", error);

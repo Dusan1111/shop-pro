@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import styles from "./global-discount-form.module.scss";
 import { toast } from 'react-toastify';
+import MultiSelect from "../../shared/multi-select";
 
 export default function GlobalDiscountPage() {
   const router = useRouter();
@@ -13,15 +14,19 @@ export default function GlobalDiscountPage() {
   const [programName, setGlobalDiscountName] = useState("");
   const [programDescription, setGlobalDiscountDescription] = useState("");
   const [programType, setGlobalDiscountType] = useState("");
+  const [applyTo, setApplyTo] = useState("global");
   const [minPurchaseAmount, setMinPurchaseAmount] = useState<number | string>("");
   const [discountPercentage, setDiscountPercentage] = useState<number | string>("");
   const [isActive, setIsActive] = useState(true);
+  const [productIds, setProductIds] = useState<string[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [actionLoading, setActionLoading] = useState(false);
   const [loading, setLoading] = useState(isEditing);
 
   useEffect(() => {
     const fetchData = async () => {
       if (isEditing) await fetchGlobalDiscount();
+      await fetchProducts();
       setLoading(false);
     };
     fetchData();
@@ -35,11 +40,24 @@ export default function GlobalDiscountPage() {
       setGlobalDiscountName(globalDiscount.name ?? "");
       setGlobalDiscountDescription(globalDiscount.description ?? "");
       setGlobalDiscountType(globalDiscount.type ?? "");
+      setApplyTo(globalDiscount.applyTo ?? "global");
       setMinPurchaseAmount(globalDiscount.minPurchaseAmount ?? "");
       setDiscountPercentage(globalDiscount.discountPercentage ?? "");
       setIsActive(globalDiscount.isActive ?? true);
+      setProductIds(globalDiscount.productIds ?? []);
     } catch (err) {
       console.error("Error fetching global discount:", err);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/admin/api/products");
+      if (!res.ok) throw new Error("Failed to fetch products");
+      const { data: productsData } = await res.json();
+      setProducts(productsData ?? []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
     }
   };
 
@@ -55,15 +73,17 @@ export default function GlobalDiscountPage() {
           name: programName,
           description: programDescription,
           type: programType,
+          applyTo: applyTo,
           minPurchaseAmount: minPurchaseAmount || undefined,
           discountPercentage: discountPercentage || undefined,
           isActive: isActive,
+          productIds: applyTo === "specific" ? productIds : [],
         }),
       });
 
       const responseData = await response.json();
       if (response.ok) {
-        toast.success(responseData.message || "Globalni popust uspešno sačuvan!");
+        toast.success(responseData.message || "Popust uspešno sačuvan!");
         router.push("/admin/manage-global-discounts");
       } else {
         toast.error(responseData.message || "Došlo je do greške.");
@@ -80,7 +100,7 @@ export default function GlobalDiscountPage() {
     return (
       <>
         <div className="page-title">
-          <h1>{isEditing ? "Izmeni globalni popust" : "Dodaj globalni popust"}</h1>
+          <h1>{isEditing ? "Izmeni popust" : "Dodaj popust"}</h1>
         </div>
         <div className={styles.globalDiscountFormPage}>
           <div className="floatingLabel">
@@ -110,7 +130,7 @@ export default function GlobalDiscountPage() {
   return (
     <>
       <div className="page-title">
-        <h1>{isEditing ? "Izmeni globalni popust" : "Dodaj globalni popust"}</h1>
+        <h1>{isEditing ? "Izmeni popust" : "Dodaj popust"}</h1>
       </div>
       <div className={styles.globalDiscountFormPage}>
         {/* Form Fields */}
@@ -153,6 +173,35 @@ export default function GlobalDiscountPage() {
           </select>
           <label htmlFor="programType">Tip programa</label>
         </div>
+
+        <div className="floatingLabel">
+          <select
+            className="create-select"
+            id="applyTo"
+            value={applyTo}
+            onChange={(e) => setApplyTo(e.target.value)}
+            disabled={actionLoading}
+            required
+          >
+            <option value="global">Globalni</option>
+            <option value="specific">Pojedinačni proizvod</option>
+          </select>
+          <label htmlFor="applyTo">Namena</label>
+        </div>
+
+        {applyTo === "specific" && (
+          <div className={styles.productsSection}>
+            <div className={styles.sectionLabel}>Proizvodi</div>
+            <MultiSelect
+              options={products}
+              selectedValues={productIds}
+              onSelectionChange={setProductIds}
+              placeholder="Izaberite proizvode..."
+              searchPlaceholder="Pretražite proizvode..."
+              disabled={actionLoading}
+            />
+          </div>
+        )}
 
         <div className="floatingLabel">
           <input

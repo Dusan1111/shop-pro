@@ -169,3 +169,14 @@
     background-color: var(--primary-dark);
   }
 }
+
+.productsSection {
+  margin-bottom: 20px;
+
+  .sectionLabel {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--foreground);
+    margin-bottom: 10px;
+  }
+}
