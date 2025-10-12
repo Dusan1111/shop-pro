@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getUserDbFromSession();
@@ -14,9 +14,10 @@ export async function GET(
     }
 
     const { db } = session;
+    const { id } = await params;
 
     const program = await db.collection("GlobalDiscounts").findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
       isDeleted: false,
     });
 
