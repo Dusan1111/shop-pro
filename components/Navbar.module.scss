@@ -72,7 +72,14 @@
     font-family: 'Cinzel Decorative', cursive;
 
     @media (max-width: 768px) {
-      display: none;
+      position: static;
+      transform: none;
+      font-size: 12px;
+      padding: 4px 8px;
+      margin: 0 auto;
+      max-width: fit-content;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
   

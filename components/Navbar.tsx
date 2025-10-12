@@ -65,13 +65,15 @@ export default function Navbar() {
     <div className={styles.header}>
       <nav className={styles.navbar}>
         <div className={styles.container}>
-          <button
-            className={styles.menuButton}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {isAdmin && (
+            <button
+              className={styles.menuButton}
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          )}
 
           <Link
             href={isAdmin ? "/admin/manage-orders" : "/"}
@@ -96,11 +98,11 @@ export default function Navbar() {
             </div>
           )}
 
-          <div
-            className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}
-          >
-            {isAdmin ? (
-              // Admin navigation links
+          {isAdmin && (
+            <div
+              className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}
+            >
+              {/* Admin navigation links */}
               <>
                 {isSuperAdmin && (
                   <Link
@@ -167,8 +169,8 @@ export default function Navbar() {
                   Izloguj se
                 </Link>
               </>
-            ) : null}
-          </div>
+            </div>
+          )}
         </div>
       </nav>
     </div>
