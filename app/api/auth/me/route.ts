@@ -24,7 +24,8 @@ export async function GET(req: NextRequest) {
       isSuperAdmin: payload.isSuperAdmin || false,
       role: payload.role || null,
       fullName: payload.fullName || null,
-      tenantName: payload.tenantName || null
+      tenantName: payload.tenantName || null,
+      permissions: payload.permissions || []
     });
   } catch (error) {
     console.error('Error in /api/auth/me:', error);

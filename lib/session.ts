@@ -13,6 +13,7 @@ export interface TokenPayload {
   role?: string | null;
   fullName?: string;
   tenantName?: string | null;
+  permissions?: string[];
 }
 
 export function verifyToken(token: string): TokenPayload | null {

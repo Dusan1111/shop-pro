@@ -168,3 +168,103 @@
     background-color: var(--primary-dark);
   }
 }
+
+.permissionsContainer {
+  margin-bottom: 1.5rem;
+
+  .permissionsLabel {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--foreground);
+    margin-bottom: 12px;
+  }
+
+  .permissionsGroups {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .permissionGroup {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--card);
+
+    .groupHeader {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--foreground);
+      background-color: var(--muted);
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .permissionsGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 15px;
+
+      .permissionItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          accent-color: var(--primary);
+
+          &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+          }
+        }
+
+        label {
+          font-size: 14px;
+          color: var(--foreground);
+          cursor: pointer;
+          user-select: none;
+          position: static;
+          transform: none;
+          background: none;
+          padding: 0;
+
+          &:hover {
+            color: var(--primary);
+          }
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      .permissionsGrid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+.skeletonLabel {
+  width: 100px;
+  height: 20px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.skeletonPermissions {
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive = true } = body;
+    const { name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive = true, permissions = [] } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       gmailAppPassword: gmailAppPassword || null,
       phoneNumber: phoneNumber || null,
       isActive,
+      permissions: permissions || [],
       isDeleted: false,
       createdAt: new Date(),
     };
@@ -137,7 +138,7 @@ export async function PUT(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { id, name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive } = body;
+    const { id, name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive, permissions } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -178,6 +179,9 @@ export async function PUT(req: NextRequest) {
     }
     if (isActive !== undefined) {
       updateData.isActive = isActive;
+    }
+    if (permissions !== undefined) {
+      updateData.permissions = permissions;
     }
 
     const result = await db.collection("Tenants").updateOne(

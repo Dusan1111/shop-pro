@@ -41,10 +41,12 @@ export async function POST(req: NextRequest) {
       }
     }
     let tenantName = null;
+    let permissions: string[] = [];
     if (user.tenantId) {
       const tenant = await settingsDb.collection('Tenants').findOne({ _id: user.tenantId }) as any;
       if (tenant) {
         tenantName = tenant.name;
+        permissions = tenant.permissions || [];
       }
     }
     if (!user.tenantId) {
@@ -54,7 +56,8 @@ export async function POST(req: NextRequest) {
         dbName: settingsDbName,
         role: roleName,
         fullName: user.fullName || user.email,
-        tenantName: tenantName
+        tenantName: tenantName,
+        permissions: []
       }, JWT_SECRET, { expiresIn: '7d' });
       const cookie = serialize('token', token, {
         httpOnly: true,
@@ -81,7 +84,8 @@ export async function POST(req: NextRequest) {
       dbName: tenant.dbName,
       role: roleName,
       fullName: user.fullName || user.email,
-      tenantName: tenant.name
+      tenantName: tenant.name,
+      permissions: permissions
     }, JWT_SECRET, { expiresIn: '7d' });
     const cookie = serialize('token', token, {
       httpOnly: true,

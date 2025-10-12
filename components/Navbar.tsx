@@ -22,6 +22,8 @@ export default function Navbar() {
     setFullName,
     tenantName,
     setTenantName,
+    hasPermission,
+    setPermissions,
   } = useAuth();
 
   const toggleMenu = () => {
@@ -43,6 +45,7 @@ export default function Navbar() {
       setIsSuperAdmin(false);
       setFullName(null);
       setTenantName(null);
+      setPermissions([]);
       // Close the menu
       setIsMenuOpen(false);
 
@@ -114,37 +117,43 @@ export default function Navbar() {
                 )}
                 {!isSuperAdmin && (
                   <>
-                    <Link
-                      href="/admin/manage-products"
-                      onClick={() => setIsMenuOpen(false)}
-                      className={
-                        pathname === "/admin/manage-products"
-                          ? styles.active
-                          : ""
-                      }
-                    >
-                      Proizvodi
-                    </Link>
-                    <Link
-                      href="/admin/manage-global-discounts"
-                      onClick={() => setIsMenuOpen(false)}
-                      className={
-                        pathname === "/admin/manage-global-discounts"
-                          ? styles.active
-                          : ""
-                      }
-                    >
-                      Popusti
-                    </Link>
-                    <Link
-                      href="/admin/manage-orders"
-                      onClick={() => setIsMenuOpen(false)}
-                      className={
-                        pathname === "/admin/manage-orders" ? styles.active : ""
-                      }
-                    >
-                      Porudžbine
-                    </Link>
+                    {hasPermission("manage_products") && (
+                      <Link
+                        href="/admin/manage-products"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={
+                          pathname === "/admin/manage-products"
+                            ? styles.active
+                            : ""
+                        }
+                      >
+                        Proizvodi
+                      </Link>
+                    )}
+                    {(hasPermission("manage_discounts") || hasPermission("manage_vouchers")) && (
+                      <Link
+                        href="/admin/manage-global-discounts"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={
+                          pathname === "/admin/manage-global-discounts"
+                            ? styles.active
+                            : ""
+                        }
+                      >
+                        Popusti
+                      </Link>
+                    )}
+                    {hasPermission("manage_orders") && (
+                      <Link
+                        href="/admin/manage-orders"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={
+                          pathname === "/admin/manage-orders" ? styles.active : ""
+                        }
+                      >
+                        Porudžbine
+                      </Link>
+                    )}
                   </>
                 )}
                 <Link

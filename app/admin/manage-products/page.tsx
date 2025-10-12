@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import styles from "./manage-products.module.scss";
 import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function ManageProductsCategoriesPage() {
+  const { hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'attributes' | 'attribute-values'>('products');
 
   // Product interfaces and state
@@ -219,35 +221,43 @@ export default function ManageProductsCategoriesPage() {
         <div className={styles.tabCard}>
           {/* Tab Headers */}
           <div className={styles.tabHeaders}>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'products' ? styles.active : ''}`}
-              onClick={() => setActiveTab('products')}
-            >
-              Proizvodi
-            </button>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'categories' ? styles.active : ''}`}
-              onClick={() => setActiveTab('categories')}
-            >
-              Kategorije
-            </button>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'attributes' ? styles.active : ''}`}
-              onClick={() => setActiveTab('attributes')}
-            >
-              Atributi
-            </button>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'attribute-values' ? styles.active : ''}`}
-              onClick={() => setActiveTab('attribute-values')}
-            >
-              Vrednosti atributa
-            </button>
+            {hasPermission('manage_products') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'products' ? styles.active : ''}`}
+                onClick={() => setActiveTab('products')}
+              >
+                Proizvodi
+              </button>
+            )}
+            {hasPermission('manage_categories') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'categories' ? styles.active : ''}`}
+                onClick={() => setActiveTab('categories')}
+              >
+                Kategorije
+              </button>
+            )}
+            {hasPermission('manage_attributes') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'attributes' ? styles.active : ''}`}
+                onClick={() => setActiveTab('attributes')}
+              >
+                Atributi
+              </button>
+            )}
+            {hasPermission('manage_attribute_values') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'attribute-values' ? styles.active : ''}`}
+                onClick={() => setActiveTab('attribute-values')}
+              >
+                Vrednosti atributa
+              </button>
+            )}
           </div>
 
           {/* Tab Content */}
           <div className={styles.tabContent}>
-            {activeTab === 'products' ? (
+            {activeTab === 'products' && hasPermission('manage_products') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -273,7 +283,7 @@ export default function ManageProductsCategoriesPage() {
                   />
                 )}
               </>
-            ) : activeTab === 'categories' ? (
+            ) : activeTab === 'categories' && hasPermission('manage_categories') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -299,7 +309,7 @@ export default function ManageProductsCategoriesPage() {
                   />
                 )}
               </>
-            ) : activeTab === 'attributes' ? (
+            ) : activeTab === 'attributes' && hasPermission('manage_attributes') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -325,7 +335,7 @@ export default function ManageProductsCategoriesPage() {
                   />
                 )}
               </>
-            ) : (
+            ) : activeTab === 'attribute-values' && hasPermission('manage_attribute_values') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -351,6 +361,8 @@ export default function ManageProductsCategoriesPage() {
                   />
                 )}
               </>
+            ) : (
+              <p>Nemate permisiju za pristup ovom tabu.</p>
             )}
           </div>
         </div>

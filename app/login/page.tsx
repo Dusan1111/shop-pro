@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const { setIsAdmin, setIsSuperAdmin, setFullName } = useAuth();
+  const { setIsAdmin, setIsSuperAdmin, setFullName, setTenantName, setPermissions } = useAuth();
 
   const validate = () => {
     return {
@@ -83,6 +83,8 @@ export default function LoginPage() {
           const userData = await meResponse.json();
           setIsAdmin(true);
           setFullName(userData.fullName || null);
+          setTenantName(userData.tenantName || null);
+          setPermissions(userData.permissions || []);
 
           if (userData.isSuperAdmin) {
             setIsSuperAdmin(true);

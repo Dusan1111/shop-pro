@@ -12,6 +12,9 @@ interface AuthContextType {
   setFullName: (value: string | null) => void;
   tenantName: string | null;
   setTenantName: (value: string | null) => void;
+  permissions: string[];
+  setPermissions: (value: string[]) => void;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,6 +57,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   });
 
+  const [permissions, setPermissionsState] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const storedPermissions = localStorage.getItem("permissions");
+      return storedPermissions ? JSON.parse(storedPermissions) : [];
+    }
+    return [];
+  });
+
   const [isLoading, setIsLoading] = useState(true);
 
   // Function to update state and save to local storage
@@ -93,6 +104,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setPermissions = (value: string[]) => {
+    setPermissionsState(value);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("permissions", JSON.stringify(value));
+    }
+  };
+
+  const hasPermission = (permission: string) => {
+    // Super admin has all permissions
+    if (isSuperAdmin) return true;
+    // Check if user has the specific permission
+    return permissions.includes(permission);
+  };
+
   // Check super admin status on mount
   useEffect(() => {
     const checkSuperAdmin = async () => {
@@ -103,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setIsSuperAdmin(data.isSuperAdmin || false);
           setFullName(data.fullName || null);
           setTenantName(data.tenantName || null);
+          setPermissions(data.permissions || []);
         }
       } catch (error) {
         console.error('Error checking super admin status:', error);
@@ -115,7 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName, tenantName, setTenantName }}>
+    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName, tenantName, setTenantName, permissions, setPermissions, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

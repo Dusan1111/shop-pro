@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import styles from "./manage-global-discounts.module.scss";
 import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function PopustiPage() {
+  const { hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<'global-discounts' | 'vouchers'>('global-discounts');
 
   interface GlobalDiscount {
@@ -129,23 +131,27 @@ export default function PopustiPage() {
         <div className={styles.tabCard}>
           {/* Tab Headers */}
           <div className={styles.tabHeaders}>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'global-discounts' ? styles.active : ''}`}
-              onClick={() => setActiveTab('global-discounts')}
-            >
-              Popusti
-            </button>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'vouchers' ? styles.active : ''}`}
-              onClick={() => setActiveTab('vouchers')}
-            >
-              Vaučeri
-            </button>
+            {hasPermission('manage_discounts') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'global-discounts' ? styles.active : ''}`}
+                onClick={() => setActiveTab('global-discounts')}
+              >
+                Popusti
+              </button>
+            )}
+            {hasPermission('manage_vouchers') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'vouchers' ? styles.active : ''}`}
+                onClick={() => setActiveTab('vouchers')}
+              >
+                Vaučeri
+              </button>
+            )}
           </div>
 
           {/* Tab Content */}
           <div className={styles.tabContent}>
-            {activeTab === 'global-discounts' && (
+            {activeTab === 'global-discounts' && hasPermission('manage_discounts') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -171,9 +177,7 @@ export default function PopustiPage() {
                   />
                 )}
               </>
-            )}
-
-            {activeTab === 'vouchers' && (
+            ) : activeTab === 'vouchers' && hasPermission('manage_vouchers') ? (
               <>
                 <button
                   className={styles.addButton}
@@ -189,6 +193,8 @@ export default function PopustiPage() {
                   <p>Vaučeri funkcionalnost dolazi uskoro...</p>
                 )}
               </>
+            ) : (
+              <p>Nemate permisiju za pristup ovom tabu.</p>
             )}
           </div>
         </div>

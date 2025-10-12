@@ -16,8 +16,34 @@ export default function TenantPage() {
   const [gmailAppPassword, setGmailAppPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [permissions, setPermissions] = useState<string[]>([]);
   const [actionLoading, setActionLoading] = useState(false);
   const [loading, setLoading] = useState(isEditing);
+
+  const permissionGroups = [
+    {
+      tab: "Proizvodi",
+      permissions: [
+        { value: "manage_products", label: "Proizvodi" },
+        { value: "manage_categories", label: "Kategorije" },
+        { value: "manage_attributes", label: "Atributi" },
+        { value: "manage_attribute_values", label: "Vrednosti atributa" },
+      ]
+    },
+    {
+      tab: "Popusti",
+      permissions: [
+        { value: "manage_discounts", label: "Globalni popusti" },
+        { value: "manage_vouchers", label: "Vaučeri" },
+      ]
+    },
+    {
+      tab: "Porudžbine",
+      permissions: [
+        { value: "manage_orders", label: "Porudžbine" },
+      ]
+    }
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +64,7 @@ export default function TenantPage() {
       setGmailAppPassword(tenant.gmailAppPassword ?? "");
       setPhoneNumber(tenant.phoneNumber ?? "");
       setIsActive(tenant.isActive ?? true);
+      setPermissions(tenant.permissions ?? []);
     } catch (err) {
       console.error("Error fetching tenant:", err);
       toast.error("Greška prilikom učitavanja firme.");
@@ -59,6 +86,7 @@ export default function TenantPage() {
           gmailAppPassword: gmailAppPassword || undefined,
           phoneNumber: phoneNumber || undefined,
           isActive: isActive,
+          permissions: permissions,
         }),
       });
 
@@ -102,6 +130,10 @@ export default function TenantPage() {
           )}
           <div className="floatingLabel">
             <div className={styles.skeletonInput}></div>
+          </div>
+          <div className={styles.permissionsContainer}>
+            <div className={styles.skeletonLabel}></div>
+            <div className={styles.skeletonPermissions}></div>
           </div>
           <div className={`actions ${styles.actionsSection}`}>
             <div className={styles.skeletonButton}></div>
@@ -178,6 +210,38 @@ export default function TenantPage() {
             disabled={actionLoading}
           />
           <label htmlFor="phoneNumber">Broj telefona</label>
+        </div>
+
+        <div className={styles.permissionsContainer}>
+          <label className={styles.permissionsLabel}>Permisije</label>
+          <div className={styles.permissionsGroups}>
+            {permissionGroups.map((group) => (
+              <div key={group.tab} className={styles.permissionGroup}>
+                <div className={styles.groupHeader}>{group.tab}</div>
+                <div className={styles.permissionsGrid}>
+                  {group.permissions.map((permission) => (
+                    <div key={permission.value} className={styles.permissionItem}>
+                      <input
+                        type="checkbox"
+                        id={permission.value}
+                        value={permission.value}
+                        checked={permissions.includes(permission.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setPermissions([...permissions, permission.value]);
+                          } else {
+                            setPermissions(permissions.filter(p => p !== permission.value));
+                          }
+                        }}
+                        disabled={actionLoading}
+                      />
+                      <label htmlFor={permission.value}>{permission.label}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className={styles.toggleContainer}>
