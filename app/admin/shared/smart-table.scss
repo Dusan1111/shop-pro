@@ -4,8 +4,11 @@ th {
   text-align: start;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-family: 'Cinzel Decorative', cursive;
+  letter-spacing: 0.05em;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 }
 
 .tableContainer {
@@ -32,7 +35,11 @@ th {
   padding: 2px 16px;
   text-align: left;
   font-size: 14px;
-  font-family: 'Cinzel Decorative', cursive;
+
+  @media (max-width: 768px) {
+    padding: 2px 8px;
+    font-size: 13px;
+  }
 }
 
 .table th:first-child {
@@ -48,7 +55,10 @@ th {
   align-items: center;
   font-size: 14px;
   color: #6b7280;
-  font-family: 'Cinzel Decorative', cursive;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 }
 
 .table tr {
@@ -112,7 +122,11 @@ th {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
-  font-family: 'Cinzel Decorative', cursive;
+
+  @media (max-width: 768px) {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
 
   &:hover:not(:disabled) {
     background-color: #f3f4f6;
@@ -153,7 +167,12 @@ th {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'Cinzel Decorative', cursive;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    padding: 6px 10px;
+    width: 65px;
+  }
 
   &:hover {
     border-color: #d1d5db;
@@ -192,7 +211,11 @@ th {
   background-color: #ffffff;
   color: #374151;
   transition: all 0.2s ease;
-  font-family: 'Cinzel Decorative', cursive;
+
+  @media (max-width: 768px) {
+    font-size: 16px; /* Prevents iOS zoom */
+    padding: 10px 12px;
+  }
 
   &::placeholder {
     color: #9ca3af;

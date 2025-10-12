@@ -175,9 +175,15 @@
   .permissionsLabel {
     display: block;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--foreground);
     margin-bottom: 12px;
+    position: static;
+    transform: none;
+
+    &::after {
+      content: none !important;
+    }
   }
 
   .permissionsGroups {
@@ -233,6 +239,11 @@
           transform: none;
           background: none;
           padding: 0;
+          font-weight: 500;
+
+          &::after {
+            content: none !important;
+          }
 
           &:hover {
             color: var(--primary);
