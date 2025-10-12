@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./manage-companies.module.scss";
 import TableComponent from "../shared/smart-table";
 import RoleProtection from "../shared/role-protection";
 
 export default function ManageCompaniesPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'firme' | 'korisnici' | 'role'>('firme');
 
   // Tenants state
@@ -13,7 +15,7 @@ export default function ManageCompaniesPage() {
     _id: string;
     name: string;
     dbName: string;
-    description?: string;
+    isActive: boolean;
   }
 
   // Users state
@@ -23,6 +25,7 @@ export default function ManageCompaniesPage() {
     tenantId?: string;
     tenantName?: string;
     roleId?: string;
+    roleName?: string;
   }
 
   // Roles state
@@ -151,6 +154,21 @@ export default function ManageCompaniesPage() {
       return response;
     });
 
+  const customRenderers = {
+    isActive: (tenant: Tenant) => (
+      <span style={{
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 500,
+        backgroundColor: tenant.isActive ? '#d4edda' : '#f8d7da',
+        color: tenant.isActive ? '#155724' : '#721c24'
+      }}>
+        {tenant.isActive ? 'Aktivan' : 'Neaktivan'}
+      </span>
+    ),
+  };
+
   return (
     <RoleProtection allowSuperAdmin={true}>
       <div className="page-title">
@@ -188,18 +206,23 @@ export default function ManageCompaniesPage() {
             {/* Firme Tab */}
             {activeTab === 'firme' && (
               <>
-                <button className={styles.btn} disabled={actionLoading}>
+                <button
+                  className={styles.btn}
+                  onClick={() => router.push('/admin/manage-companies/new')}
+                  disabled={actionLoading}
+                >
                   {actionLoading ? "Učitavanje..." : "Dodaj firmu"}
                 </button>
                 <TableComponent
                   data={tenants}
-                  columns={["ID", "Naziv", "Ime Baze", "Opis"]}
-                  columnKeys={["_id", "name", "dbName", "description"]}
-                  onRowClick={(tenant) => console.log('Edit tenant', tenant._id)}
+                  columns={["ID", "Naziv", "Ime Baze", "Status", ""]}
+                  columnKeys={["_id", "name", "dbName", "isActive"]}
+                  onRowClick={(tenant) => router.push(`/admin/manage-companies/${tenant._id}`)}
                   onRemove={(tenant: Tenant) => {
                     setItemToDelete(tenant._id);
                     setIsDeleting(true);
                   }}
+                  customRenderers={customRenderers}
                 />
               </>
             )}
@@ -212,8 +235,8 @@ export default function ManageCompaniesPage() {
                 </button>
                 <TableComponent
                   data={users}
-                  columns={["ID", "Email", "Firma", "Rola ID"]}
-                  columnKeys={["_id", "email", "tenantName", "roleId"]}
+                  columns={["ID", "Email", "Firma", "Rola", ""]}
+                  columnKeys={["_id", "email", "tenantName", "roleName"]}
                   onRowClick={(user) => console.log('Edit user', user._id)}
                   onRemove={(user: User) => {
                     setItemToDelete(user._id);

@@ -6,8 +6,9 @@ export async function GET(req: NextRequest) {
   try {
     const client = await clientPromise;
     const db = client.db(settingsDbName);
+
     const tenants = await db.collection("Tenants")
-      .find({ isDeleted: false })
+      .find({})
       .toArray();
 
     return NextResponse.json({ status: 200, data: tenants });
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { name, dbName, description, gmailUser, gmailAppPassword } = body;
+    const { name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive = true } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -41,14 +42,40 @@ export async function POST(req: NextRequest) {
     const newTenant = {
       name,
       dbName,
-      description,
       gmailUser: gmailUser || null,
       gmailAppPassword: gmailAppPassword || null,
+      phoneNumber: phoneNumber || null,
+      isActive,
       isDeleted: false,
       createdAt: new Date(),
     };
 
     const result = await db.collection("Tenants").insertOne(newTenant);
+
+    // Create the new database with all required collections
+    try {
+      const newDb = client.db(dbName);
+      const collections = [
+        "AttributeValues",
+        "Attributes",
+        "Categories",
+        "GlobalDiscounts",
+        "OrderItems",
+        "Orders",
+        "Products",
+        "Users"
+      ];
+
+      // Create all collections
+      for (const collectionName of collections) {
+        await newDb.createCollection(collectionName);
+      }
+
+      console.log(`Database '${dbName}' created successfully with collections: ${collections.join(", ")}`);
+    } catch (dbError) {
+      console.error(`Error creating database '${dbName}':`, dbError);
+      // Continue even if database creation fails - it might already exist
+    }
 
     return NextResponse.json({
       message: "Firma uspešno dodata",
@@ -110,7 +137,7 @@ export async function PUT(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { id, name, dbName, description, gmailUser, gmailAppPassword } = body;
+    const { id, name, dbName, gmailUser, gmailAppPassword, phoneNumber, isActive } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -136,16 +163,21 @@ export async function PUT(req: NextRequest) {
     const updateData: any = {
       name,
       dbName,
-      description,
       updatedAt: new Date()
     };
 
-    // Only update Gmail credentials if provided
+    // Only update fields if provided
     if (gmailUser !== undefined) {
       updateData.gmailUser = gmailUser;
     }
     if (gmailAppPassword !== undefined) {
       updateData.gmailAppPassword = gmailAppPassword;
+    }
+    if (phoneNumber !== undefined) {
+      updateData.phoneNumber = phoneNumber;
+    }
+    if (isActive !== undefined) {
+      updateData.isActive = isActive;
     }
 
     const result = await db.collection("Tenants").updateOne(

@@ -8,14 +8,12 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db(settingsDbName);
 
-    // Aggregate to join Users with Tenants
+    // Aggregate to join Users with Tenants and Roles
     const users = await db.collection("Users").aggregate([
       {
-        $match: { isDeleted: false }
-      },
-      {
         $addFields: {
-          tenantObjectId: { $toObjectId: "$tenantId" }
+          tenantObjectId: { $toObjectId: "$tenantId" },
+          roleObjectId: { $toObjectId: "$roleId" }
         }
       },
       {
@@ -27,9 +25,28 @@ export async function GET(req: NextRequest) {
         }
       },
       {
+        $lookup: {
+          from: "Roles",
+          localField: "roleObjectId",
+          foreignField: "_id",
+          as: "roleDetails"
+        }
+      },
+      {
         $unwind: {
           path: "$tenantDetails",
           preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $unwind: {
+          path: "$roleDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          "roleDetails.name": { $ne: "super_admin" } // Exclude users with super_admin role
         }
       },
       {
@@ -39,7 +56,8 @@ export async function GET(req: NextRequest) {
           tenantId: 1,
           roleId: 1,
           createdAt: 1,
-          tenantName: "$tenantDetails.name"
+          tenantName: "$tenantDetails.name",
+          roleName: "$roleDetails.name"
         }
       }
     ]).toArray();

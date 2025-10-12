@@ -241,6 +241,15 @@ select {
     color: var(--primary);
     padding: 0 6px;
   }
+
+  // Disabled state styling
+  &:disabled {
+    background-color: #f5f5f5 !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+    border-color: #ddd !important;
+  }
 }
 
 select:focus+label,

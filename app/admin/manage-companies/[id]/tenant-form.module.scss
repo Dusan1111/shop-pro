@@ -1,0 +1,170 @@
+.tenantFormPage {
+  border-radius: var(--radius);
+  padding: 30px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .actionsSection {
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px 15px;
+    gap: 15px;
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px 10px;
+    gap: 10px;
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+// Skeleton Styles
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeletonInput {
+  width: 100%;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonTextarea {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.skeletonButton {
+  width: 120px;
+  height: 45px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+
+  .toggleLabel {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--foreground);
+    position: static;
+  }
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  &:active:not([disabled]) .toggleSlider {
+    transform: scale(0.95);
+  }
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    pointer-events: none;
+
+    &:checked ~ .toggleSlider {
+      background-color: var(--primary);
+    }
+
+    &:checked ~ .toggleSlider:before {
+      transform: translateX(24px);
+    }
+
+    &:disabled ~ .toggleSlider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: all 0.3s ease;
+  border-radius: 34px;
+
+  &:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:hover {
+    background-color: #b3b3b3;
+  }
+
+  input:checked ~ &:hover {
+    background-color: var(--primary-dark);
+  }
+}

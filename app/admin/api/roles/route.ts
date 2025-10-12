@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db(settingsDbName);
     const roles = await db.collection("Roles")
-      .find({ isDeleted: false })
+      .find({})
       .toArray();
 
     return NextResponse.json({ status: 200, data: roles });
