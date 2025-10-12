@@ -151,7 +151,7 @@ export async function DELETE(req: NextRequest) {
       { _id: new ObjectId(userId) }
     );
 
-    if (result.matchedCount === 0) {
+    if (result.deletedCount === 0) {
       return NextResponse.json(
         { status: 404, message: "Korisnik nije pronađen!" },
         { status: 404 }

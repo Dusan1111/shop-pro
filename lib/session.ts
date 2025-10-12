@@ -12,6 +12,7 @@ export interface TokenPayload {
   isSuperAdmin?: boolean;
   role?: string | null;
   fullName?: string;
+  tenantName?: string | null;
 }
 
 export function verifyToken(token: string): TokenPayload | null {

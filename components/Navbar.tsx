@@ -12,7 +12,17 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName } = useAuth();
+  const {
+    isAdmin,
+    setIsAdmin,
+    isSuperAdmin,
+    setIsSuperAdmin,
+    isLoading,
+    fullName,
+    setFullName,
+    tenantName,
+    setTenantName,
+  } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,7 +42,7 @@ export default function Navbar() {
       setIsAdmin(false);
       setIsSuperAdmin(false);
       setFullName(null);
-
+      setTenantName(null);
       // Close the menu
       setIsMenuOpen(false);
 
@@ -75,8 +85,11 @@ export default function Navbar() {
           </Link>
 
           {fullName && (
-            <div className={styles.welcomeMessage}>
-              Dobrodošli, {fullName}
+            <div
+              className={styles.welcomeMessage}
+              style={isSuperAdmin ? { border: '2px solid #dc2626', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#fee2e2' } : {}}
+            >
+              {fullName} - {tenantName || "Shop Wizard"}
             </div>
           )}
 
@@ -91,7 +104,9 @@ export default function Navbar() {
                     href="/admin/manage-companies"
                     onClick={() => setIsMenuOpen(false)}
                     className={
-                      pathname === "/admin/manage-companies" ? styles.active : ""
+                      pathname === "/admin/manage-companies"
+                        ? styles.active
+                        : ""
                     }
                   >
                     Kompanije
@@ -103,7 +118,9 @@ export default function Navbar() {
                       href="/admin/manage-products"
                       onClick={() => setIsMenuOpen(false)}
                       className={
-                        pathname === "/admin/manage-products" ? styles.active : ""
+                        pathname === "/admin/manage-products"
+                          ? styles.active
+                          : ""
                       }
                     >
                       Proizvodi

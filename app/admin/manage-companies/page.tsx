@@ -8,7 +8,7 @@ import RoleProtection from "../shared/role-protection";
 
 export default function ManageCompaniesPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'firme' | 'korisnici' | 'role'>('firme');
+  const [activeTab, setActiveTab] = useState<'firme' | 'korisnici'>('firme');
 
   // Tenants state
   interface Tenant {
@@ -28,17 +28,8 @@ export default function ManageCompaniesPage() {
     roleName?: string;
   }
 
-  // Roles state
-  interface Role {
-    _id: string;
-    name: string;
-    description?: string;
-    permissions?: string[];
-  }
-
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -52,8 +43,6 @@ export default function ManageCompaniesPage() {
       getTenants();
     } else if (activeTab === 'korisnici') {
       getUsers();
-    } else if (activeTab === 'role') {
-      getRoles();
     }
   }, [activeTab]);
 
@@ -97,25 +86,6 @@ export default function ManageCompaniesPage() {
     }
   };
 
-  const getRoles = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/admin/api/roles");
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      const data = await response.json();
-      setRoles(data.data || []);
-    } catch (error) {
-      console.error("Server Error:", error);
-      setError(error as Error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleApiResponse = async (apiCall: () => Promise<Response>) => {
     try {
@@ -137,7 +107,7 @@ export default function ManageCompaniesPage() {
 
   const deleteItem = () =>
     handleApiResponse(async () => {
-      const endpoint = activeTab === 'firme' ? 'tenants' : activeTab === 'korisnici' ? 'users' : 'roles';
+      const endpoint = activeTab === 'firme' ? 'tenants' : 'users';
       const response = await fetch(`/admin/api/${endpoint}?id=${itemToDelete}`, {
         method: "DELETE",
       });
@@ -147,8 +117,6 @@ export default function ManageCompaniesPage() {
           setTenants((prev) => prev.filter((item) => item._id !== itemToDelete));
         } else if (activeTab === 'korisnici') {
           setUsers((prev) => prev.filter((item) => item._id !== itemToDelete));
-        } else {
-          setRoles((prev) => prev.filter((item) => item._id !== itemToDelete));
         }
       }
       return response;
@@ -190,12 +158,6 @@ export default function ManageCompaniesPage() {
             onClick={() => setActiveTab('korisnici')}
           >
             Korisnici
-          </button>
-          <button
-            className={`${styles.tab} ${activeTab === 'role' ? styles.active : ''}`}
-            onClick={() => setActiveTab('role')}
-          >
-            Role
           </button>
         </div>
 
@@ -244,25 +206,6 @@ export default function ManageCompaniesPage() {
                   onRowClick={(user) => router.push(`/admin/manage-users/${user._id}`)}
                   onRemove={(user: User) => {
                     setItemToDelete(user._id);
-                    setIsDeleting(true);
-                  }}
-                />
-              </>
-            )}
-
-            {/* Role Tab */}
-            {activeTab === 'role' && (
-              <>
-                <button className={styles.btn} disabled={actionLoading}>
-                  {actionLoading ? "Učitavanje..." : "Dodaj rolu"}
-                </button>
-                <TableComponent
-                  data={roles}
-                  columns={["ID", "Naziv", "Opis"]}
-                  columnKeys={["_id", "name", "description"]}
-                  onRowClick={(role) => console.log('Edit role', role._id)}
-                  onRemove={(role: Role) => {
-                    setItemToDelete(role._id);
                     setIsDeleting(true);
                   }}
                 />

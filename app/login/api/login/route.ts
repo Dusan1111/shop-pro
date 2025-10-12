@@ -40,17 +40,21 @@ export async function POST(req: NextRequest) {
         roleName = role.name;
       }
     }
-
-    // Ch      }, JWT_SECRET, { expiresIn: '7d' });
-      console.log('Super admin token:', user);
+    let tenantName = null;
+    if (user.tenantId) {
+      const tenant = await settingsDb.collection('Tenants').findOne({ _id: user.tenantId }) as any;
+      if (tenant) {
+        tenantName = tenant.name;
+      }
+    }
     if (!user.tenantId) {
-      // Super admin - use settings database
       const token = jwt.sign({
         userId: user._id,
         isSuperAdmin: true,
         dbName: settingsDbName,
         role: roleName,
-        fullName: user.fullName || user.email
+        fullName: user.fullName || user.email,
+        tenantName: tenantName
       }, JWT_SECRET, { expiresIn: '7d' });
       const cookie = serialize('token', token, {
         httpOnly: true,
@@ -76,7 +80,8 @@ export async function POST(req: NextRequest) {
       tenantId: user.tenantId,
       dbName: tenant.dbName,
       role: roleName,
-      fullName: user.fullName || user.email
+      fullName: user.fullName || user.email,
+      tenantName: tenant.name
     }, JWT_SECRET, { expiresIn: '7d' });
     const cookie = serialize('token', token, {
       httpOnly: true,

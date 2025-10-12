@@ -10,6 +10,8 @@ interface AuthContextType {
   isLoading: boolean;
   fullName: string | null;
   setFullName: (value: string | null) => void;
+  tenantName: string | null;
+  setTenantName: (value: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,6 +46,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   });
 
+  const [tenantName, setTenantNameState] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedTenantName = localStorage.getItem("tenantName");
+      return storedTenantName;
+    }
+    return null;
+  });
+
   const [isLoading, setIsLoading] = useState(true);
 
   // Function to update state and save to local storage
@@ -72,6 +82,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setTenantName = (value: string | null) => {
+    setTenantNameState(value);
+    if (typeof window !== "undefined") {
+      if (value) {
+        localStorage.setItem("tenantName", value);
+      } else {
+        localStorage.removeItem("tenantName");
+      }
+    }
+  };
+
   // Check super admin status on mount
   useEffect(() => {
     const checkSuperAdmin = async () => {
@@ -81,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const data = await response.json();
           setIsSuperAdmin(data.isSuperAdmin || false);
           setFullName(data.fullName || null);
+          setTenantName(data.tenantName || null);
         }
       } catch (error) {
         console.error('Error checking super admin status:', error);
@@ -93,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName }}>
+    <AuthContext.Provider value={{ isAdmin, setIsAdmin, isSuperAdmin, setIsSuperAdmin, isLoading, fullName, setFullName, tenantName, setTenantName }}>
       {children}
     </AuthContext.Provider>
   );
