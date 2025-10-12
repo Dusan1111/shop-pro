@@ -230,14 +230,18 @@ export default function ManageCompaniesPage() {
             {/* Korisnici Tab */}
             {activeTab === 'korisnici' && (
               <>
-                <button className={styles.btn} disabled={actionLoading}>
+                <button
+                  className={styles.btn}
+                  onClick={() => router.push('/admin/manage-users/new')}
+                  disabled={actionLoading}
+                >
                   {actionLoading ? "Učitavanje..." : "Dodaj korisnika"}
                 </button>
                 <TableComponent
                   data={users}
                   columns={["ID", "Email", "Firma", "Rola", ""]}
                   columnKeys={["_id", "email", "tenantName", "roleName"]}
-                  onRowClick={(user) => console.log('Edit user', user._id)}
+                  onRowClick={(user) => router.push(`/admin/manage-users/${user._id}`)}
                   onRemove={(user: User) => {
                     setItemToDelete(user._id);
                     setIsDeleting(true);

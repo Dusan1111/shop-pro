@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { email, password, tenantId, roleId } = body;
+    const { fullName, email, password, tenantId, roleId } = body;
 
     if (!email) {
       return NextResponse.json(
@@ -101,14 +101,20 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    const newUser = {
+    const newUser: any = {
+      fullName: fullName || null,
       email,
       password: hashedPassword,
-      tenantId: tenantId || null,
-      roleId: roleId || null,
-      isDeleted: false,
       createdAt: new Date(),
     };
+
+    // Convert to ObjectId if provided
+    if (tenantId) {
+      newUser.tenantId = new ObjectId(tenantId);
+    }
+    if (roleId) {
+      newUser.roleId = new ObjectId(roleId);
+    }
 
     const result = await db.collection("Users").insertOne(newUser);
 
@@ -141,9 +147,8 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const result = await db.collection("Users").updateOne(
-      { _id: new ObjectId(userId) },
-      { $set: { isDeleted: true } }
+    const result = await db.collection("Users").deleteOne(
+      { _id: new ObjectId(userId) }
     );
 
     if (result.matchedCount === 0) {
@@ -172,7 +177,7 @@ export async function PUT(req: NextRequest) {
     const db = client.db(settingsDbName);
 
     const body = await req.json();
-    const { id, email, password, tenantId, roleId } = body;
+    const { id, fullName, email, password, tenantId, roleId } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -190,12 +195,19 @@ export async function PUT(req: NextRequest) {
 
     const updateData: any = {
       email,
-      tenantId: tenantId || null,
-      roleId: roleId || null,
       updatedAt: new Date()
     };
 
-    // Only update password if provided
+    // Only update fields if provided
+    if (fullName !== undefined) {
+      updateData.fullName = fullName;
+    }
+    if (tenantId) {
+      updateData.tenantId = new ObjectId(tenantId);
+    }
+    if (roleId) {
+      updateData.roleId = new ObjectId(roleId);
+    }
     if (password) {
       updateData.password = await hashPassword(password);
     }
