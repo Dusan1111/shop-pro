@@ -16,6 +16,7 @@ export default function ManageCompaniesPage() {
     name: string;
     dbName: string;
     isActive: boolean;
+    permissions?: string[];
   }
 
   // Users state
@@ -135,6 +136,30 @@ export default function ManageCompaniesPage() {
         {tenant.isActive ? 'Aktivan' : 'Neaktivan'}
       </span>
     ),
+    permissions: (tenant: Tenant) => (
+      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+        {tenant.permissions && tenant.permissions.length > 0 ? (
+          tenant.permissions.map((permission, index) => (
+            <span
+              key={index}
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                fontWeight: 500,
+                backgroundColor: '#e3f2fd',
+                color: '#1976d2',
+                border: '1px solid #90caf9'
+              }}
+            >
+              {permission}
+            </span>
+          ))
+        ) : (
+          <span style={{ color: '#999', fontSize: '12px' }}>Nema permisija</span>
+        )}
+      </div>
+    ),
   };
 
   return (
@@ -177,8 +202,8 @@ export default function ManageCompaniesPage() {
                 </button>
                 <TableComponent
                   data={tenants}
-                  columns={["ID", "Naziv", "Ime Baze", "Status", ""]}
-                  columnKeys={["_id", "name", "dbName", "isActive"]}
+                  columns={["ID", "Naziv", "Ime Baze", "Status", "Permisije", ""]}
+                  columnKeys={["_id", "name", "dbName", "isActive", "permissions"]}
                   onRowClick={(tenant) => router.push(`/admin/manage-companies/${tenant._id}`)}
                   onRemove={(tenant: Tenant) => {
                     setItemToDelete(tenant._id);
