@@ -14,7 +14,8 @@
       "Bash(npm run build:*)",
       "Bash(rm:*)",
       "Bash(ren:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
