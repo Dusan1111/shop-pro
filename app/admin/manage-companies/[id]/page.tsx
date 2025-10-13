@@ -42,6 +42,13 @@ export default function TenantPage() {
       permissions: [
         { value: "manage_orders", label: "Porudžbine" },
       ]
+    },
+    {
+      tab: "Kupci",
+      permissions: [
+        { value: "manage_buyers", label: "Upravljanje kupcima" },
+        { value: "manage_loyalty_program", label: "Program lojalnosti" },
+      ]
     }
   ];
 

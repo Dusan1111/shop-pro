@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import styles from "./buyers-detail.module.scss";
 import { toast } from 'react-toastify';
+import RoleProtection from "../../shared/role-protection";
 
 export default function UserDetailPage() {
   const router = useRouter();
@@ -31,19 +32,9 @@ export default function UserDetailPage() {
       if (!res.ok) throw new Error("Failed to fetch user");
       const { data: user } = await res.json();
 
-      // Handle both firstName/lastName and fullName
-      if (user.firstName) {
-        setFirstName(user.firstName);
-      } else if (user.fullName) {
-        const nameParts = user.fullName.split(' ');
-        setFirstName(nameParts[0] || "");
-        setLastName(nameParts.slice(1).join(' ') || "");
-      }
-
-      if (user.lastName) {
-        setLastName(user.lastName);
-      }
-
+      // Handle name/lastname fields
+      setFirstName(user.name || "");
+      setLastName(user.lastname || "");
       setEmail(user.email ?? "");
       setAddress(user.address ?? "");
       setPostalCode(user.postalCode ?? "");
@@ -59,7 +50,7 @@ export default function UserDetailPage() {
 
   if (loading) {
     return (
-      <>
+      <RoleProtection allowSuperAdmin={false} requiredPermission="manage_buyers">
         <div className="page-title">
           <h1>Detalji kupca</h1>
         </div>
@@ -94,12 +85,12 @@ export default function UserDetailPage() {
             <div className={styles.skeletonButton}></div>
           </div>
         </div>
-      </>
+      </RoleProtection>
     );
   }
 
   return (
-    <>
+    <RoleProtection allowSuperAdmin={false} requiredPermission="manage_buyers">
       <div className="page-title">
         <h1>Detalji kupca</h1>
       </div>
@@ -147,6 +138,6 @@ export default function UserDetailPage() {
           </button>
         </div>
       </div>
-    </>
+    </RoleProtection>
   );
 }

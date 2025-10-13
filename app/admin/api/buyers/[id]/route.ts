@@ -16,7 +16,7 @@ export async function GET(
       );
     }
 
-    const { db, tenantId, isSuperAdmin } = session;
+    const { db, tenantId, isSuperAdmin, permissions } = session;
 
     // Only regular admin users can access this endpoint
     if (isSuperAdmin) {
@@ -33,12 +33,20 @@ export async function GET(
       );
     }
 
+    // Check for manage_buyers permission
+    if (!permissions.includes("manage_buyers")) {
+      return NextResponse.json(
+        { status: 403, message: "You don't have permission to manage buyers" },
+        { status: 403 }
+      );
+    }
+
     const { id } = await params;
 
-    // Fetch user and verify it belongs to the admin's tenant
+    // Fetch buyer (customer user without tenantId)
     const user = await db.collection("Users").findOne({
       _id: new ObjectId(id),
-      tenantId: new ObjectId(tenantId)
+      tenantId: { $exists: false }
     });
 
     if (!user) {

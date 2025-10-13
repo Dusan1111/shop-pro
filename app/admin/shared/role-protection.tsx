@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 interface RoleProtectionProps {
   children: React.ReactNode;
   allowSuperAdmin?: boolean;
+  requiredPermission?: string;
 }
 
-export default function RoleProtection({ children, allowSuperAdmin = false }: RoleProtectionProps) {
+export default function RoleProtection({ children, allowSuperAdmin = false, requiredPermission }: RoleProtectionProps) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +39,15 @@ export default function RoleProtection({ children, allowSuperAdmin = false }: Ro
       if (!data.isSuperAdmin && allowSuperAdmin) {
         router.push('/admin/manage-products');
         return;
+      }
+
+      // Check for required permission
+      if (requiredPermission && !data.isSuperAdmin) {
+        const hasPermission = data.permissions?.includes(requiredPermission);
+        if (!hasPermission) {
+          router.push('/admin/manage-orders');
+          return;
+        }
       }
 
       setIsAuthorized(true);

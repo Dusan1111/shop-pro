@@ -48,6 +48,7 @@ export async function getUserDbFromSession() {
     dbName: payload.dbName,
     isSuperAdmin: payload.isSuperAdmin || false,
     role: payload.role || null,
-    fullName: payload.fullName || null
+    fullName: payload.fullName || null,
+    permissions: payload.permissions || []
   };
 }

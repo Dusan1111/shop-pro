@@ -161,15 +161,17 @@ export default function Navbar() {
                         Porudžbine
                       </Link>
                     )}
-                    <Link
-                      href="/admin/buyers"
-                      onClick={() => setIsMenuOpen(false)}
-                      className={
-                        pathname === "/admin/buyers" ? styles.active : ""
-                      }
-                    >
-                      Kupci
-                    </Link>
+                    {hasPermission("manage_buyers") && (
+                      <Link
+                        href="/admin/buyers"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={
+                          pathname === "/admin/buyers" ? styles.active : ""
+                        }
+                      >
+                        Kupci
+                      </Link>
+                    )}
                   </>
                 )}
                 <Link
