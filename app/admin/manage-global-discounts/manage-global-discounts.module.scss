@@ -75,7 +75,9 @@
 
   .tabHeaders {
     display: flex;
-    max-width: 12rem;
+    gap: 8px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0;
     padding: 0px !important;
     @media (max-width: 500px) {
       overflow-x: auto;
@@ -83,36 +85,36 @@
   }
 
   .tabButton {
-    flex: 1;
-    padding: 0.625rem 0.9375rem;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b7280;
+    background: transparent;
     border: none;
-    font-size: 0.75rem !important;
-    background-color: transparent;
-    color: var(--muted-foreground);
-    font-weight: 500;
+    border-bottom: 3px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-bottom: 3px solid transparent;
+    position: relative;
+    bottom: -2px;
 
     &:hover {
-      background-color: var(--accent);
-      color: var(--foreground);
+      color: var(--primary);
+      background-color: rgba(37, 99, 235, 0.05);
     }
 
     &.active {
-      background-color: var(--card);
-      color: white;
-      background-color: var(--primary);
-      font-weight: 600;
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background-color: rgba(37, 99, 235, 0.08);
     }
 
     @media (max-width: 768px) {
-      padding: 0.75rem 1rem;
+      padding: 10px 16px;
       font-size: 14px;
     }
 
     @media (max-width: 450px) {
-      padding: 0.75rem 0.5rem;
+      padding: 10px 12px;
       white-space: nowrap;
     }
   }

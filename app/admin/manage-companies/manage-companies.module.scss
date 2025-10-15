@@ -3,29 +3,40 @@
   padding: 20px;
 
   .tabs {
-    margin-bottom: 20px;
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0;
   }
 
   .tab {
-    padding: 10px 20px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b7280;
     background: transparent;
     border: none;
+    border-bottom: 3px solid transparent;
     cursor: pointer;
-    font-size: 16px;
-    color: var(--text);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    position: relative;
+    bottom: -2px;
 
     &:hover {
       color: var(--primary);
+      background-color: rgba(37, 99, 235, 0.05);
     }
 
     &.active {
       color: var(--primary);
       border-bottom-color: var(--primary);
+      background-color: rgba(37, 99, 235, 0.08);
+    }
+
+    @media (max-width: 768px) {
+      padding: 10px 16px;
+      font-size: 14px;
     }
   }
 
