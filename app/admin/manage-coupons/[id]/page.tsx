@@ -92,6 +92,13 @@ export default function CouponPage() {
           <h1>{isEditing ? "Izmeni kupon" : "Dodaj kupon"}</h1>
         </div>
         <div className={styles.globalDiscountFormPage}>
+          <button
+            className={styles.backButtonTop}
+            onClick={() => router.back()}
+            disabled={actionLoading}
+          >
+            Nazad
+          </button>
           <div className={styles.formGrid}>
             <div className={styles.toggleContainer}>
               <span className={styles.toggleLabel}>Aktivan</span>
@@ -137,6 +144,13 @@ export default function CouponPage() {
         <h1>{isEditing ? "Izmeni kupon" : "Dodaj kupon"}</h1>
       </div>
       <div className={styles.globalDiscountFormPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         <div className={styles.formGrid}>
           {/* Form Fields */}
           <div className={styles.toggleContainer}>

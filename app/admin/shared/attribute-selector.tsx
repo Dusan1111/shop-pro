@@ -118,7 +118,7 @@ export default function AttributeSelector({
                     </option>
                   )}
                 </select>
-                <label>Atribut</label>
+                {/* <label>Atribut</label> */}
               </div>
 
               <button

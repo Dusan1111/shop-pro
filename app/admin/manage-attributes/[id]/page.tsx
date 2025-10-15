@@ -76,6 +76,13 @@ export default function AttributePage() {
         </div>
 
         <div className={styles.attributePage}>
+          <button
+            className={styles.backButtonTop}
+            onClick={() => router.back()}
+            disabled={actionLoading}
+          >
+            Nazad
+          </button>
           {/* Form Field Skeleton */}
           <div className="floatingLabel">
             <div className={styles.skeletonInput}></div>
@@ -98,6 +105,13 @@ export default function AttributePage() {
       </div>
 
       <div className={styles.attributePage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.push("/admin/manage-attributes")}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         <div className={"floatingLabel"}>
           <input
             type="text"

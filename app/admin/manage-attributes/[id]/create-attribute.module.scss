@@ -1,5 +1,9 @@
 .attributePage {
-  padding: 30px 20px 20px 20px;
+  position: relative;
+  padding-top: 4.125rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px 2rem;
@@ -23,14 +27,19 @@
 
 // Skeleton Styles
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
 }
 
 .skeletonInput {
   width: 100%;
   height: 45px;
-  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 6px;
@@ -40,8 +49,40 @@
 .skeletonButton {
   width: 120px;
   height: 45px;
-  background: linear-gradient(90deg, var(--muted) 0%, rgba(255,255,255,0.4) 50%, var(--muted) 100%);
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius);
+}
+
+.backButtonTop {
+  position: absolute;
+  top: -24px;
+  left: 24px;
+  padding: 8px 8px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--primary);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
 }

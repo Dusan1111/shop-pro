@@ -115,6 +115,13 @@ const handleSave = async () => {
       </div>
 
       <div className={styles.categoryPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         {/* Main Image Skeleton */}
         <div className={styles.mainImageSection}>
           <div>Glavna slika</div>
@@ -149,6 +156,13 @@ const handleSave = async () => {
     </div>
 
       <div className={styles.categoryPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         {/* Main Image */}
         <div className={styles.mainImageSection}>
           <div>Glavna slika</div>

@@ -3,6 +3,8 @@
   padding: 30px 20px 20px 20px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  padding-top: 4.125rem;
 
   h1 {
     margin-bottom: 30px;
@@ -14,6 +16,39 @@
     color: red;
     margin-bottom: 1rem;
     text-align: center;
+  }
+
+  .backButtonTop {
+    position: absolute;
+    top: -24px;
+    left: 24px;
+    padding: 8px 8px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--primary);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+
+    &:hover:not(:disabled) {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
   }
 
   .formGrid {
@@ -139,15 +174,15 @@
     position: absolute;
     pointer-events: none;
 
-    &:checked ~ .toggleSlider {
+    &:checked~.toggleSlider {
       background-color: var(--primary);
     }
 
-    &:checked ~ .toggleSlider:before {
+    &:checked~.toggleSlider:before {
       transform: translateX(24px);
     }
 
-    &:disabled ~ .toggleSlider {
+    &:disabled~.toggleSlider {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -186,7 +221,7 @@
     background-color: #b3b3b3;
   }
 
-  input:checked ~ &:hover {
+  input:checked~&:hover {
     background-color: var(--primary-dark);
   }
 }

@@ -289,6 +289,13 @@ export default function ProductPage() {
         <h1>{isEditing ? "Izmeni proizvod" : "Dodaj proizvod"}</h1>
       </div>
       <div className={styles.productPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         {/* Main Image Skeleton */}
         <div className={styles.mainImageSection}>
           <div className={styles.imageWrapper}>
@@ -363,6 +370,13 @@ export default function ProductPage() {
     <><div className="page-title">
       <h1>{isEditing ? "Izmeni proizvod" : "Dodaj proizvod"}</h1>
     </div><div className={styles.productPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
 
         {/* Main Image */}
         <div className={styles.mainImageSection}>

@@ -82,6 +82,13 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
       <><div className="page-title">
         <h1>Izmeni porudžbinu</h1>
       </div><div className={styles.orderPage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.back()}
+          disabled={saving}
+        >
+          Nazad
+        </button>
         <div className={styles.layoutColumns}>
           {/* Order Info Skeleton */}
           <div className={styles.orderInfo}>
@@ -167,6 +174,13 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
     <><div className="page-title">
       <h1>Izmeni porudžbinu</h1>
     </div><div className={styles.orderPage}>
+      <button
+        className={styles.backButtonTop}
+        onClick={() => router.push("/admin/manage-orders")}
+        disabled={saving}
+      >
+        Nazad
+      </button>
 
         <div className={styles.layoutColumns}>
           <div className={styles.orderInfo}>

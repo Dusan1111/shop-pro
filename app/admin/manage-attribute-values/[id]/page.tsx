@@ -113,6 +113,13 @@ export default function AttributeValuePage() {
         </div>
 
         <div className={styles.attributeValuePage}>
+          <button
+            className={styles.backButtonTop}
+            onClick={() => router.back()}
+            disabled={actionLoading}
+          >
+            Nazad
+          </button>
           {/* Form Fields Skeletons */}
           <div className="floatingLabel">
             <div className={styles.skeletonSelect}></div>
@@ -143,6 +150,13 @@ export default function AttributeValuePage() {
       </div>
 
       <div className={styles.attributeValuePage}>
+        <button
+          className={styles.backButtonTop}
+          onClick={() => router.push("/admin/manage-attribute-values")}
+          disabled={actionLoading}
+        >
+          Nazad
+        </button>
         <div className={"floatingLabel"}>
           <select
             id="attributeSelect"
