@@ -315,9 +315,16 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '0');
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
     const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
 
     // Build filter query - search by Order ID only
     const filter: any = {};
+
+    // Add status filter if provided
+    if (status) {
+      filter.status = status;
+    }
+
     if (search) {
       // Check if search is a valid ObjectId (full match)
       if (ObjectId.isValid(search) && search.length === 24) {
@@ -331,8 +338,9 @@ export async function GET(req: NextRequest) {
     // For partial ObjectId search, we need to fetch all and filter
     if (search && search.length > 0 && search.length < 24) {
       // Fetch all orders and filter by string representation of _id
+      const statusFilter = status ? { status } : {};
       const allOrders = await db.collection("Orders")
-        .find({})
+        .find(statusFilter)
         .sort({ orderTime: -1 })
         .toArray();
       const filteredOrders = allOrders.filter(order =>

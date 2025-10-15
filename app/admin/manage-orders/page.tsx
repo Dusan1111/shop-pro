@@ -5,6 +5,8 @@ import styles from "./manage-orders.module.scss";
 import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
 
+type OrderStatus = "U pripremi" | "Poslata" | "Otkazana";
+
 export default function ManageOrdersPage() {
   interface Order {
     _id: string;
@@ -22,6 +24,7 @@ export default function ManageOrdersPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<OrderStatus>("U pripremi");
   const router = useRouter();
 
   const fetchOrders = useCallback(async () => {
@@ -30,7 +33,8 @@ export default function ManageOrdersPage() {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         pageSize: pageSize.toString(),
-        search: searchQuery
+        search: searchQuery,
+        status: activeTab
       });
 
       const response = await fetch(`api/orders?${params}`, { method: "GET" });
@@ -46,7 +50,7 @@ export default function ManageOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, searchQuery]);
+  }, [currentPage, pageSize, searchQuery, activeTab]);
 
   useEffect(() => {
     fetchOrders();
@@ -89,6 +93,12 @@ export default function ManageOrdersPage() {
       </span>
     )
   };
+  const handleTabChange = (status: OrderStatus) => {
+    setActiveTab(status);
+    setCurrentPage(0);
+    setSearchQuery("");
+  };
+
   return (
     <>
       <div className="page-title">
@@ -96,6 +106,27 @@ export default function ManageOrdersPage() {
       </div>
       <div className={styles.manageCategoriesPage}>
         <div className={styles.manageOrdersPage}>
+          <div className={styles.tabsContainer}>
+            <button
+              className={`${styles.tab} ${activeTab === "U pripremi" ? styles.activeTab : ""}`}
+              onClick={() => handleTabChange("U pripremi")}
+            >
+              Primljene
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === "Poslata" ? styles.activeTab : ""}`}
+              onClick={() => handleTabChange("Poslata")}
+            >
+              Poslate
+            </button>
+            <button
+              className={`${styles.tab} ${activeTab === "Otkazana" ? styles.activeTab : ""}`}
+              onClick={() => handleTabChange("Otkazana")}
+            >
+              Otkazane
+            </button>
+          </div>
+
           <TableComponent
             data={orders}
             columns={["ID", "Vreme", "Korisnik", "Email", "Telefon", "Total", "Status"]}

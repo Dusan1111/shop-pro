@@ -82,76 +82,79 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
       <><div className="page-title">
         <h1>Izmeni porudžbinu</h1>
       </div><div className={styles.orderPage}>
-        {/* Order Info Skeleton */}
-        <div className={styles.orderInfo}>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>ID:</b>
-            <div className={styles.skeletonText}></div>
+        <div className={styles.layoutColumns}>
+          {/* Order Info Skeleton */}
+          <div className={styles.orderInfo}>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>ID:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Ukupna cena:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Kupac:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Email kupca:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Adresa:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Grad:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Poštanski kod:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Dostava:</b>
+              <div className={styles.skeletonText}></div>
+            </div>
+            <div className={styles.orderInfoRow}>
+              <b className={styles.label}>Status:</b>
+              <div className={styles.skeletonSelect}></div>
+            </div>
           </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Ukupna cena:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Kupac:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Email kupca:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Adresa:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Grad:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Poštanski kod:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Dostava:</b>
-            <div className={styles.skeletonText}></div>
-          </div>
-          <div className={styles.orderInfoRow}>
-            <b className={styles.label}>Status:</b>
-            <div className={styles.skeletonSelect}></div>
-          </div>
-        </div>
 
-        <h2>Stavke porudžbine</h2>
-        <div className={styles.tableWrapper}>
-          <table className={styles.orderTable}>
-            <thead>
-              <tr>
-                <th>Slika</th>
-                <th>Proizvod</th>
-                <th>Količina</th>
-                <th>Plaćeno</th>
-                <th>Cena</th>
-                <th>Ukupno</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(3)].map((_, idx) => (
-                <tr key={idx}>
-                  <td><div className={styles.skeletonImage}></div></td>
-                  <td><div className={styles.skeletonText}></div></td>
-                  <td><div className={styles.skeletonInput}></div></td>
-                  <td><div className={styles.skeletonText}></div></td>
-                  <td><div className={styles.skeletonText}></div></td>
-                  <td><div className={styles.skeletonText}></div></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className={styles.rightColumn}>
+            <h2>Stavke porudžbine</h2>
+            <div className={styles.tableWrapper}>
+              <table className={styles.orderTable}>
+                <thead>
+                  <tr>
+                    <th>Slika</th>
+                    <th>Proizvod</th>
+                    <th>Količina</th>
+                    <th>Plaćeno</th>
+                    <th>Cena</th>
+                    <th>Ukupno</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(3)].map((_, idx) => (
+                    <tr key={idx}>
+                      <td><div className={styles.skeletonImage}></div></td>
+                      <td><div className={styles.skeletonText}></div></td>
+                      <td><div className={styles.skeletonInput}></div></td>
+                      <td><div className={styles.skeletonText}></div></td>
+                      <td><div className={styles.skeletonText}></div></td>
+                      <td><div className={styles.skeletonText}></div></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <div className="actions">
-          <div className={styles.skeletonButton}></div>
           <div className={styles.skeletonButton}></div>
         </div>
       </div></>
