@@ -1,4 +1,4 @@
-# E-commerce Shop Wizard
+# E-commerce Shop PRO
 
 An admin panel for managing e-commerce operations including products, categories, orders, attributes, and global discounts.
 

@@ -91,7 +91,10 @@ export default function Navbar() {
               height={40}
               className={styles.logoImage}
             />
-            <span>Shop Wizard</span>
+            <span>
+              <span style={{ color: '#00008B' }}>shop</span>{' '}
+              <span style={{ color: '#ADD8E6' }}>pro</span>
+            </span>
           </Link>
 
           {fullName && (
@@ -99,7 +102,7 @@ export default function Navbar() {
               className={styles.welcomeMessage}
               style={isSuperAdmin ? { border: '2px solid #dc2626', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#fee2e2' } : {}}
             >
-              {fullName} - {tenantName || "Shop Wizard"}
+              {fullName} - {tenantName || "Shop PRO"}
             </div>
           )}
 

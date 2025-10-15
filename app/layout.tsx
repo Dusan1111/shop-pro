@@ -14,8 +14,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Shop Wizard",
-  description: "Shop Wizard - Your Ultimate E-commerce Admin Panel",
+  title: "Shop PRO",
+  description: "Shop PRO - Your Ultimate E-commerce Admin Panel",
 };
 
 export default function RootLayout({
