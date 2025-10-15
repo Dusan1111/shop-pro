@@ -97,6 +97,15 @@
   border-radius: var(--radius);
 }
 
+.skeletonToggle {
+  width: 50px;
+  height: 26px;
+  background: linear-gradient(90deg, var(--muted) 0%, rgba(255, 255, 255, 0.4) 50%, var(--muted) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 34px;
+}
+
 .toggleContainer {
   display: flex;
   align-items: center;

@@ -104,6 +104,10 @@ export default function GlobalDiscountPage() {
         </div>
         <div className={styles.globalDiscountFormPage}>
           <div className={styles.formGrid}>
+            <div className={styles.toggleContainer}>
+              <span className={styles.toggleLabel}>Aktivan</span>
+              <div className={styles.skeletonToggle}></div>
+            </div>
             <div className={`floatingLabel ${styles.fullWidth}`}>
               <div className={styles.skeletonInput}></div>
             </div>
@@ -140,6 +144,20 @@ export default function GlobalDiscountPage() {
       <div className={styles.globalDiscountFormPage}>
         <div className={styles.formGrid}>
           {/* Form Fields */}
+          <div className={styles.toggleContainer}>
+            <span className={styles.toggleLabel}>Aktivan</span>
+            <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={() => {}}
+                disabled={actionLoading}
+                readOnly
+              />
+              <span className={styles.toggleSlider}></span>
+            </div>
+          </div>
+
           <div className={`floatingLabel ${styles.fullWidth}`}>
             <input
               type="text"
@@ -248,20 +266,6 @@ export default function GlobalDiscountPage() {
               </label>
             </div>
           )}
-
-          <div className={styles.toggleContainer}>
-            <span className={styles.toggleLabel}>Aktivan</span>
-            <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={() => {}}
-                disabled={actionLoading}
-                readOnly
-              />
-              <span className={styles.toggleSlider}></span>
-            </div>
-          </div>
         </div>
 
         {/* Actions */}
