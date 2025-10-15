@@ -25,7 +25,43 @@ export default function ManageOrdersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderStatus>("U pripremi");
+  const [statusCounts, setStatusCounts] = useState<Record<OrderStatus, number>>({
+    "U pripremi": 0,
+    "Poslata": 0,
+    "Otkazana": 0
+  });
   const router = useRouter();
+
+  const fetchStatusCounts = useCallback(async () => {
+    try {
+      const statuses: OrderStatus[] = ["U pripremi", "Poslata", "Otkazana"];
+      const counts: Record<OrderStatus, number> = {
+        "U pripremi": 0,
+        "Poslata": 0,
+        "Otkazana": 0
+      };
+
+      await Promise.all(
+        statuses.map(async (status) => {
+          const params = new URLSearchParams({
+            page: "0",
+            pageSize: "1",
+            search: "",
+            status: status
+          });
+          const response = await fetch(`api/orders?${params}`, { method: "GET" });
+          const data = await response.json();
+          if (response.ok) {
+            counts[status] = data.totalCount;
+          }
+        })
+      );
+
+      setStatusCounts(counts);
+    } catch (error) {
+      console.error("Error fetching status counts:", error);
+    }
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -55,6 +91,10 @@ export default function ManageOrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+  useEffect(() => {
+    fetchStatusCounts();
+  }, [fetchStatusCounts]);
 
 
   // Function to get the styling for a status
@@ -112,6 +152,9 @@ export default function ManageOrdersPage() {
               onClick={() => handleTabChange("U pripremi")}
             >
               Primljene
+              {statusCounts["U pripremi"] > 0 && (
+                <span className={styles.countBadge}>{statusCounts["U pripremi"]}</span>
+              )}
             </button>
             <button
               className={`${styles.tab} ${activeTab === "Poslata" ? styles.activeTab : ""}`}
