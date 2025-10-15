@@ -92,20 +92,31 @@ export default function CouponPage() {
           <h1>{isEditing ? "Izmeni kupon" : "Dodaj kupon"}</h1>
         </div>
         <div className={styles.globalDiscountFormPage}>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonTextarea}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonSelect}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
+          <div className={styles.formGrid}>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className={`floatingLabel ${styles.fullWidth}`}>
+              <div className={styles.skeletonTextarea}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonSelect}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
           </div>
           <div className={`actions ${styles.actionsSection}`}>
             <div className={styles.skeletonButton}></div>
@@ -122,117 +133,119 @@ export default function CouponPage() {
         <h1>{isEditing ? "Izmeni kupon" : "Dodaj kupon"}</h1>
       </div>
       <div className={styles.globalDiscountFormPage}>
-        {/* Form Fields */}
-        <div className="floatingLabel">
-          <input
-            type="text"
-            id="code"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            disabled={actionLoading}
-            required
-          />
-          <label htmlFor="code">Kod kupona</label>
-        </div>
-
-        <div className="floatingLabel">
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={actionLoading}
-            required
-          />
-          <label htmlFor="name">Naziv kupona</label>
-        </div>
-
-        <div className="floatingLabel">
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={actionLoading}
-          />
-          <label htmlFor="description">Opis</label>
-        </div>
-
-        <div className="floatingLabel">
-          <select
-            className="create-select"
-            id="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            disabled={actionLoading}
-            required
-          >
-            <option value="">Izaberi tip kupona</option>
-            <option value="percentage">Procenat popusta</option>
-            <option value="fixed">Fiksni popust</option>
-          </select>
-          <label htmlFor="type">Tip kupona</label>
-        </div>
-
-        {type && (
+        <div className={styles.formGrid}>
+          {/* Form Fields */}
           <div className="floatingLabel">
             <input
-              type="number"
-              id="discountValue"
-              value={discountValue}
-              onChange={(e) => setDiscountValue(e.target.value)}
+              type="text"
+              id="code"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
               disabled={actionLoading}
               required
             />
-            <label htmlFor="discountValue">
-              {type === "percentage" ? "Procenat popusta (%)" : "Popust u RSD"}
-            </label>
+            <label htmlFor="code">Kod kupona</label>
           </div>
-        )}
 
-        <div className="floatingLabel">
-          <input
-            type="number"
-            id="minPurchaseAmount"
-            value={minPurchaseAmount}
-            onChange={(e) => setMinPurchaseAmount(e.target.value)}
-            disabled={actionLoading}
-          />
-          <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
-        </div>
-
-        <div className="floatingLabel">
-          <input
-            type="number"
-            id="maxUsageCount"
-            value={maxUsageCount}
-            onChange={(e) => setMaxUsageCount(e.target.value)}
-            disabled={actionLoading}
-          />
-          <label htmlFor="maxUsageCount">Maksimalan broj upotreba po kupcu</label>
-        </div>
-
-        <div className="floatingLabel">
-          <input
-            type="date"
-            id="expiryDate"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
-            disabled={actionLoading}
-          />
-          <label htmlFor="expiryDate">Datum isteka</label>
-        </div>
-
-        <div className={styles.toggleContainer}>
-          <span className={styles.toggleLabel}>Aktivan</span>
-          <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
+          <div className="floatingLabel">
             <input
-              type="checkbox"
-              checked={isActive}
-              onChange={() => {}}
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               disabled={actionLoading}
-              readOnly
+              required
             />
-            <span className={styles.toggleSlider}></span>
+            <label htmlFor="name">Naziv kupona</label>
+          </div>
+
+          <div className={`floatingLabel ${styles.fullWidth}`}>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={actionLoading}
+            />
+            <label htmlFor="description">Opis</label>
+          </div>
+
+          <div className="floatingLabel">
+            <select
+              className="create-select"
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              disabled={actionLoading}
+              required
+            >
+              <option value="">Izaberi tip kupona</option>
+              <option value="percentage">Procenat popusta</option>
+              <option value="fixed">Fiksni popust</option>
+            </select>
+            <label htmlFor="type">Tip kupona</label>
+          </div>
+
+          {type && (
+            <div className="floatingLabel">
+              <input
+                type="number"
+                id="discountValue"
+                value={discountValue}
+                onChange={(e) => setDiscountValue(e.target.value)}
+                disabled={actionLoading}
+                required
+              />
+              <label htmlFor="discountValue">
+                {type === "percentage" ? "Procenat popusta (%)" : "Popust u RSD"}
+              </label>
+            </div>
+          )}
+
+          <div className="floatingLabel">
+            <input
+              type="number"
+              id="minPurchaseAmount"
+              value={minPurchaseAmount}
+              onChange={(e) => setMinPurchaseAmount(e.target.value)}
+              disabled={actionLoading}
+            />
+            <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
+          </div>
+
+          <div className="floatingLabel">
+            <input
+              type="number"
+              id="maxUsageCount"
+              value={maxUsageCount}
+              onChange={(e) => setMaxUsageCount(e.target.value)}
+              disabled={actionLoading}
+            />
+            <label htmlFor="maxUsageCount">Maksimalan broj upotreba po kupcu</label>
+          </div>
+
+          <div className="floatingLabel">
+            <input
+              type="date"
+              id="expiryDate"
+              value={expiryDate}
+              onChange={(e) => setExpiryDate(e.target.value)}
+              disabled={actionLoading}
+            />
+            <label htmlFor="expiryDate">Datum isteka</label>
+          </div>
+
+          <div className={styles.toggleContainer}>
+            <span className={styles.toggleLabel}>Aktivan</span>
+            <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={() => {}}
+                disabled={actionLoading}
+                readOnly
+              />
+              <span className={styles.toggleSlider}></span>
+            </div>
           </div>
         </div>
 

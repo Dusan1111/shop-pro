@@ -103,20 +103,25 @@ export default function GlobalDiscountPage() {
           <h1>{isEditing ? "Izmeni popust" : "Dodaj popust"}</h1>
         </div>
         <div className={styles.globalDiscountFormPage}>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonTextarea}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonSelect}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
-          </div>
-          <div className="floatingLabel">
-            <div className={styles.skeletonInput}></div>
+          <div className={styles.formGrid}>
+            <div className={`floatingLabel ${styles.fullWidth}`}>
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className={`floatingLabel ${styles.fullWidth}`}>
+              <div className={styles.skeletonTextarea}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonSelect}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonSelect}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
+            <div className="floatingLabel">
+              <div className={styles.skeletonInput}></div>
+            </div>
           </div>
           <div className={`actions ${styles.actionsSection}`}>
             <div className={styles.skeletonButton}></div>
@@ -133,127 +138,129 @@ export default function GlobalDiscountPage() {
         <h1>{isEditing ? "Izmeni popust" : "Dodaj popust"}</h1>
       </div>
       <div className={styles.globalDiscountFormPage}>
-        {/* Form Fields */}
-        <div className="floatingLabel">
-          <input
-            type="text"
-            id="programName"
-            value={programName}
-            onChange={(e) => setGlobalDiscountName(e.target.value)}
-            disabled={actionLoading}
-            required
-          />
-          <label htmlFor="programName">Naziv programa</label>
-        </div>
-
-        <div className="floatingLabel">
-          <textarea
-            id="programDescription"
-            value={programDescription}
-            onChange={(e) => setGlobalDiscountDescription(e.target.value)}
-            disabled={actionLoading}
-            required
-          />
-          <label htmlFor="programDescription">Opis programa</label>
-        </div>
-
-        <div className="floatingLabel">
-          <select
-            className="create-select"
-            id="programType"
-            value={programType}
-            onChange={(e) => {
-              const newType = e.target.value;
-              setGlobalDiscountType(newType);
-              if (newType === "freeShipping") {
-                setApplyTo("global");
-                setDiscountPercentage("");
-              }
-              if (newType !== "percentage" && newType !== "fixed") {
-                setDiscountPercentage("");
-              }
-            }}
-            disabled={actionLoading}
-            required
-          >
-            <option value="">Izaberi tip programa</option>
-            <option value="percentage">Procenat popusta</option>
-            <option value="fixed">Fiksni popust</option>
-            <option value="freeShipping">Besplatna dostava</option>
-          </select>
-          <label htmlFor="programType">Tip programa</label>
-        </div>
-
-        <div className="floatingLabel">
-          <select
-            className="create-select"
-            id="applyTo"
-            value={applyTo}
-            onChange={(e) => setApplyTo(e.target.value)}
-            disabled={actionLoading}
-            required
-          >
-            <option value="global">Globalni</option>
-            <option value="specific" disabled={programType === "freeShipping"}>
-              Pojedinačni proizvod
-            </option>
-          </select>
-          <label htmlFor="applyTo">Namena</label>
-        </div>
-
-        {applyTo === "specific" && (
-          <div className={styles.productsSection}>
-            <div className={styles.sectionLabel}>Proizvodi</div>
-            <MultiSelect
-              options={products}
-              selectedValues={productIds}
-              onSelectionChange={setProductIds}
-              placeholder="Izaberite proizvode..."
-              searchPlaceholder="Pretražite proizvode..."
+        <div className={styles.formGrid}>
+          {/* Form Fields */}
+          <div className={`floatingLabel ${styles.fullWidth}`}>
+            <input
+              type="text"
+              id="programName"
+              value={programName}
+              onChange={(e) => setGlobalDiscountName(e.target.value)}
               disabled={actionLoading}
+              required
             />
+            <label htmlFor="programName">Naziv programa</label>
           </div>
-        )}
 
-        {applyTo !== "specific" && (
+          <div className={`floatingLabel ${styles.fullWidth}`}>
+            <textarea
+              id="programDescription"
+              value={programDescription}
+              onChange={(e) => setGlobalDiscountDescription(e.target.value)}
+              disabled={actionLoading}
+              required
+            />
+            <label htmlFor="programDescription">Opis programa</label>
+          </div>
+
           <div className="floatingLabel">
-            <input
-              type="number"
-              id="minPurchaseAmount"
-              value={minPurchaseAmount}
-              onChange={(e) => setMinPurchaseAmount(e.target.value)}
+            <select
+              className="create-select"
+              id="programType"
+              value={programType}
+              onChange={(e) => {
+                const newType = e.target.value;
+                setGlobalDiscountType(newType);
+                if (newType === "freeShipping") {
+                  setApplyTo("global");
+                  setDiscountPercentage("");
+                }
+                if (newType !== "percentage" && newType !== "fixed") {
+                  setDiscountPercentage("");
+                }
+              }}
               disabled={actionLoading}
-            />
-            <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
+              required
+            >
+              <option value="">Izaberi tip programa</option>
+              <option value="percentage">Procenat popusta</option>
+              <option value="fixed">Fiksni popust</option>
+              <option value="freeShipping">Besplatna dostava</option>
+            </select>
+            <label htmlFor="programType">Tip programa</label>
           </div>
-        )}
 
-        {programType !== "freeShipping" && (
           <div className="floatingLabel">
-            <input
-              type="number"
-              id="discountPercentage"
-              value={discountPercentage}
-              onChange={(e) => setDiscountPercentage(e.target.value)}
+            <select
+              className="create-select"
+              id="applyTo"
+              value={applyTo}
+              onChange={(e) => setApplyTo(e.target.value)}
               disabled={actionLoading}
-            />
-            <label htmlFor="discountPercentage">
-              {programType === "percentage" ? "Procenat popusta (%)" : "Popust u RSD"}
-            </label>
+              required
+            >
+              <option value="global">Globalni</option>
+              <option value="specific" disabled={programType === "freeShipping"}>
+                Pojedinačni proizvod
+              </option>
+            </select>
+            <label htmlFor="applyTo">Namena</label>
           </div>
-        )}
 
-        <div className={styles.toggleContainer}>
-          <span className={styles.toggleLabel}>Aktivan</span>
-          <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={() => {}}
-              disabled={actionLoading}
-              readOnly
-            />
-            <span className={styles.toggleSlider}></span>
+          {applyTo === "specific" && (
+            <div className={`${styles.productsSection} ${styles.fullWidth}`}>
+              <div className={styles.sectionLabel}>Proizvodi</div>
+              <MultiSelect
+                options={products}
+                selectedValues={productIds}
+                onSelectionChange={setProductIds}
+                placeholder="Izaberite proizvode..."
+                searchPlaceholder="Pretražite proizvode..."
+                disabled={actionLoading}
+              />
+            </div>
+          )}
+
+          {applyTo !== "specific" && (
+            <div className="floatingLabel">
+              <input
+                type="number"
+                id="minPurchaseAmount"
+                value={minPurchaseAmount}
+                onChange={(e) => setMinPurchaseAmount(e.target.value)}
+                disabled={actionLoading}
+              />
+              <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
+            </div>
+          )}
+
+          {programType !== "freeShipping" && (
+            <div className="floatingLabel">
+              <input
+                type="number"
+                id="discountPercentage"
+                value={discountPercentage}
+                onChange={(e) => setDiscountPercentage(e.target.value)}
+                disabled={actionLoading}
+              />
+              <label htmlFor="discountPercentage">
+                {programType === "percentage" ? "Procenat popusta (%)" : "Popust u RSD"}
+              </label>
+            </div>
+          )}
+
+          <div className={styles.toggleContainer}>
+            <span className={styles.toggleLabel}>Aktivan</span>
+            <div className={styles.toggle} onClick={() => !actionLoading && setIsActive(!isActive)}>
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={() => {}}
+                disabled={actionLoading}
+                readOnly
+              />
+              <span className={styles.toggleSlider}></span>
+            </div>
           </div>
         </div>
 
