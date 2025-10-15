@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
         "OrderItems",
         "Orders",
         "Products",
-        "Users"
+        "Users",
+        "Coupons"
       ];
 
       // Create all collections

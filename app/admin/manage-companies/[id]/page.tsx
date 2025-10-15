@@ -35,6 +35,7 @@ export default function TenantPage() {
       permissions: [
         { value: "manage_discounts", label: "Globalni popusti" },
         { value: "manage_vouchers", label: "Vaučeri" },
+        { value: "manage_coupons", label: "Kuponi" },
       ]
     },
     {

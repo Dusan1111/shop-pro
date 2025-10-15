@@ -162,7 +162,17 @@ export default function GlobalDiscountPage() {
             className="create-select"
             id="programType"
             value={programType}
-            onChange={(e) => setGlobalDiscountType(e.target.value)}
+            onChange={(e) => {
+              const newType = e.target.value;
+              setGlobalDiscountType(newType);
+              if (newType === "freeShipping") {
+                setApplyTo("global");
+                setDiscountPercentage("");
+              }
+              if (newType !== "percentage" && newType !== "fixed") {
+                setDiscountPercentage("");
+              }
+            }}
             disabled={actionLoading}
             required
           >
@@ -184,7 +194,9 @@ export default function GlobalDiscountPage() {
             required
           >
             <option value="global">Globalni</option>
-            <option value="specific">Pojedinačni proizvod</option>
+            <option value="specific" disabled={programType === "freeShipping"}>
+              Pojedinačni proizvod
+            </option>
           </select>
           <label htmlFor="applyTo">Namena</label>
         </div>
@@ -203,16 +215,18 @@ export default function GlobalDiscountPage() {
           </div>
         )}
 
-        <div className="floatingLabel">
-          <input
-            type="number"
-            id="minPurchaseAmount"
-            value={minPurchaseAmount}
-            onChange={(e) => setMinPurchaseAmount(e.target.value)}
-            disabled={actionLoading}
-          />
-          <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
-        </div>
+        {applyTo !== "specific" && (
+          <div className="floatingLabel">
+            <input
+              type="number"
+              id="minPurchaseAmount"
+              value={minPurchaseAmount}
+              onChange={(e) => setMinPurchaseAmount(e.target.value)}
+              disabled={actionLoading}
+            />
+            <label htmlFor="minPurchaseAmount">Minimalan iznos kupovine (RSD)</label>
+          </div>
+        )}
 
         {programType !== "freeShipping" && (
           <div className="floatingLabel">

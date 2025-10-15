@@ -8,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 
 export default function PopustiPage() {
   const { hasPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState<'global-discounts' | 'vouchers'>('global-discounts');
+  const [activeTab, setActiveTab] = useState<'global-discounts' | 'vouchers' | 'coupons'>('global-discounts');
 
   interface GlobalDiscount {
     _id: string;
@@ -21,7 +21,22 @@ export default function PopustiPage() {
     isActive: boolean;
   }
 
+  interface Coupon {
+    _id: string;
+    code: string;
+    name: string;
+    description?: string;
+    type: string;
+    discountValue?: number;
+    minPurchaseAmount?: number;
+    maxUsageCount?: number;
+    usageCount: number;
+    expiryDate?: string;
+    isActive: boolean;
+  }
+
   const [globalDiscounts, setGlobalDiscounts] = useState<GlobalDiscount[]>([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -32,12 +47,16 @@ export default function PopustiPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeTab]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      await getGlobalDiscounts();
+      if (activeTab === 'global-discounts') {
+        await getGlobalDiscounts();
+      } else if (activeTab === 'coupons') {
+        await getCoupons();
+      }
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -51,6 +70,18 @@ export default function PopustiPage() {
       if (!response.ok) throw new Error("Greška prilikom dobavljanja globalnih popusta!");
       const data = await response.json();
       setGlobalDiscounts(data.data || []);
+    } catch (error) {
+      setError(error as Error);
+      throw error;
+    }
+  };
+
+  const getCoupons = async () => {
+    try {
+      const response = await fetch("/admin/api/coupons");
+      if (!response.ok) throw new Error("Greška prilikom dobavljanja kupona!");
+      const data = await response.json();
+      setCoupons(data.data || []);
     } catch (error) {
       setError(error as Error);
       throw error;
@@ -84,6 +115,18 @@ export default function PopustiPage() {
 
     if (response) {
       setGlobalDiscounts((prev) => prev.filter((program) => program._id !== programToDelete));
+    }
+  };
+
+  const deleteCoupon = async () => {
+    const response = await handleApiResponse(async () => {
+      return fetch(`/admin/api/coupons?id=${programToDelete}`, {
+        method: "DELETE",
+      });
+    });
+
+    if (response) {
+      setCoupons((prev) => prev.filter((coupon) => coupon._id !== programToDelete));
     }
   };
 
@@ -121,6 +164,42 @@ export default function PopustiPage() {
     ),
   };
 
+  const couponRenderers = {
+    isActive: (coupon: Coupon) => (
+      <span style={{
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 500,
+        backgroundColor: coupon.isActive ? '#d4edda' : '#f8d7da',
+        color: coupon.isActive ? '#155724' : '#721c24'
+      }}>
+        {coupon.isActive ? 'Aktivan' : 'Neaktivan'}
+      </span>
+    ),
+    type: (coupon: Coupon) => {
+      if (coupon.type === 'percentage') return 'Procenat';
+      if (coupon.type === 'fixed') return 'Fiksni';
+      return coupon.type;
+    },
+    discountValue: (coupon: Coupon) => {
+      if (!coupon.discountValue) return 'N/A';
+      if (coupon.type === 'fixed') return `${coupon.discountValue} RSD`;
+      return `${coupon.discountValue}%`;
+    },
+    minPurchaseAmount: (coupon: Coupon) => (
+      coupon.minPurchaseAmount ? `${coupon.minPurchaseAmount} RSD` : 'N/A'
+    ),
+    usageCount: (coupon: Coupon) => {
+      const max = coupon.maxUsageCount || '∞';
+      return `${coupon.usageCount} / ${max}`;
+    },
+    expiryDate: (coupon: Coupon) => {
+      if (!coupon.expiryDate) return 'Bez isteka';
+      return new Date(coupon.expiryDate).toLocaleDateString('sr-RS');
+    },
+  };
+
   return (
     <>
       <div className="page-title">
@@ -145,6 +224,14 @@ export default function PopustiPage() {
                 onClick={() => setActiveTab('vouchers')}
               >
                 Vaučeri
+              </button>
+            )}
+            {hasPermission('manage_coupons') && (
+              <button
+                className={`${styles.tabButton} ${activeTab === 'coupons' ? styles.active : ''}`}
+                onClick={() => setActiveTab('coupons')}
+              >
+                Kuponi
               </button>
             )}
           </div>
@@ -193,6 +280,32 @@ export default function PopustiPage() {
                   <p>Vaučeri funkcionalnost dolazi uskoro...</p>
                 )}
               </>
+            ) : activeTab === 'coupons' && hasPermission('manage_coupons') ? (
+              <>
+                <button
+                  className={styles.addButton}
+                  onClick={() => router.push(`/admin/manage-coupons/new`)}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? "Učitavanje..." : "Dodaj kupon"}
+                </button>
+
+                {loading ? (
+                  <p>Učitavanje kupona...</p>
+                ) : (
+                  <TableComponent
+                    data={coupons}
+                    columns={["ID", "Kod", "Naziv", "Tip", "Vrednost", "Min. iznos", "Upotreba", "Ističe", "Status", ""]}
+                    columnKeys={["_id", "code", "name", "type", "discountValue", "minPurchaseAmount", "usageCount", "expiryDate", "isActive"]}
+                    onRowClick={(coupon) => router.push(`/admin/manage-coupons/${coupon._id}`)}
+                    onRemove={(coupon: Coupon) => {
+                      setProgramToDelete(coupon._id);
+                      setIsDeleting(true);
+                    }}
+                    customRenderers={couponRenderers}
+                  />
+                )}
+              </>
             ) : (
               <p>Nemate permisiju za pristup ovom tabu.</p>
             )}
@@ -206,13 +319,13 @@ export default function PopustiPage() {
               <h2>Potvrdi brisanje</h2>
               {!apiMessage ? (
                 <>
-                  <p>Da li ste sigurni da želite da obrišete ovaj popust?</p>
+                  <p>Da li ste sigurni da želite da obrišete {activeTab === 'coupons' ? 'ovaj kupon' : 'ovaj popust'}?</p>
                   <div className={styles.modalActions}>
                     <button onClick={() => setIsDeleting(false)} disabled={actionLoading}>
                       Nazad
                     </button>
                     <button
-                      onClick={deleteGlobalDiscount}
+                      onClick={activeTab === 'coupons' ? deleteCoupon : deleteGlobalDiscount}
                       disabled={actionLoading}
                     >
                       {actionLoading ? "Učitavanje..." : "Obriši"}

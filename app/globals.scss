@@ -296,7 +296,9 @@ label {
   }
 }
 
-.floatingLabel label::after {
+.floatingLabel input:required + label::after,
+.floatingLabel textarea:required + label::after,
+.floatingLabel select:required + label::after {
   content: ' *';
   color: #ef4444;
   font-weight: 600;
