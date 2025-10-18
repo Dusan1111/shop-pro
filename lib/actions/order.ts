@@ -59,9 +59,9 @@ export async function processOrder(orderData: OrderSummary) {
 
         if (tenant) {
           tenantInfo = {
-            businessEmail: tenant.businessEmail || 'infosanyswings@gmail.com',
-            phoneNumber: tenant.phoneNumber || '1-800-555-1234',
-            name: tenant.name || 'Sany Swings'
+            businessEmail: tenant.businessEmail,
+            phoneNumber: tenant.phoneNumber,
+            name: tenant.name
           }
         }
       } catch (error) {
@@ -320,33 +320,28 @@ function formatCustomerEmail(orderData: OrderSummary, tenantInfo: TenantInfo): s
 }
 
 // Send detailed order email to admin
-async function sendAdminEmail(emailContent: string, orderData: OrderSummary, tenantId?: string) {
-  const emailData = {
-    to: "panticdusan93@gmail.com",
-    subject: `Nova porudžbina od ${orderData.customerInfo.fullName} - ${orderData.orderDate}`,
-    html: emailContent,
-    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com",
-    tenantId
-  }
+// async function sendAdminEmail(emailContent: string, orderData: OrderSummary, tenantId?: string) {
+//   const emailData = {
+//     to: orderData.customerInfo.email,
+//     subject: `Nova porudžbina od ${orderData.customerInfo.fullName} - ${orderData.orderDate}`,
+//     html: emailContent,
+//     from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com",
+//     tenantId
+//   }
 
-  return await sendEmail(emailData, "admin")
-}
+//   return await sendEmail(emailData, "admin")
+// }
 
 // Send confirmation email to customer
 async function sendCustomerEmail(orderData: OrderSummary, tenantId?: string, tenantInfo?: TenantInfo) {
-  const defaultTenantInfo: TenantInfo = {
-    businessEmail: 'infosanyswings@gmail.com',
-    phoneNumber: '1-800-555-1234',
-    name: 'Sany Swings'
-  }
 
-  const customerEmailContent = formatCustomerEmail(orderData, tenantInfo || defaultTenantInfo)
+  const customerEmailContent = formatCustomerEmail(orderData, tenantInfo!)
 
   const emailData = {
     to: orderData.customerInfo.email,
-    subject: `Potvrda porudžbine - ${tenantInfo?.name || 'Sany Swings'}`,
+    subject: `Potvrda porudžbine - ${tenantInfo?.name}`,
     html: customerEmailContent,
-    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com",
+    from: tenantInfo?.businessEmail ,
     tenantId
   }
 
