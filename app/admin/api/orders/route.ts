@@ -130,6 +130,7 @@ async function sendStatusChangeEmail(
         _id: new (await import("mongodb")).ObjectId(tenantId),
       })) as any;
 
+      console.log("Tenant info:", tenant);
       if (tenant) {
         tenantEmail = tenant.businessEmail;
         tenantPhone = tenant.phoneNumber;
@@ -323,9 +324,12 @@ async function sendStatusChangeEmail(
     tenantId: tenantId,
     businessEmailPassword:  businessEmailPassword,
   };
-
+  console.log(
+    "Prepared email data:", emailData
+  );
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
+  console.log("Base URL for email API:", baseUrl);
   const response = await fetch(`${baseUrl}/api/send-email`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
