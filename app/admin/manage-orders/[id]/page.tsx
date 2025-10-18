@@ -121,10 +121,6 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
               <div className={styles.skeletonText}></div>
             </div>
             <div className={styles.orderInfoRow}>
-              <b className={styles.label}>Dostava:</b>
-              <div className={styles.skeletonText}></div>
-            </div>
-            <div className={styles.orderInfoRow}>
               <b className={styles.label}>Status:</b>
               <div className={styles.skeletonSelect}></div>
             </div>
@@ -137,10 +133,10 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
                 <thead>
                   <tr>
                     <th>Slika</th>
-                    <th>Proizvod</th>
+                    <th>Naziv</th>
                     <th>Količina</th>
                     <th>Plaćeno</th>
-                    <th>Cena</th>
+                    <th>Trenutna cena</th>
                     <th>Ukupno</th>
                   </tr>
                 </thead>
@@ -184,14 +180,14 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
 
         <div className={styles.layoutColumns}>
           <div className={styles.orderInfo}>
-            <div className={styles.orderInfoRow}><b className={styles.label}>ID:</b>#{order._id}</div>
-            <div className={styles.orderInfoRow}><b className={styles.label}>Ukupna cena:</b> {order.total} RSD </div>
-            <div className={styles.orderInfoRow}><b className={styles.label}>Kupac:</b>{order.user}</div>
-            <div className={styles.orderInfoRow}><b className={styles.label}>Email kupca:</b>{order.userEmail}</div>
-            {order.address && <div className={styles.orderInfoRow}><b className={styles.label}>Adresa:</b>{order.address}</div>}
-            {order.city && <div className={styles.orderInfoRow}><b className={styles.label}>Grad:</b>{order.city}</div>}
-            {order.postalCode && <div className={styles.orderInfoRow}><b className={styles.label}>Poštanski kod:</b>{order.postalCode}</div>}
-            {order.shipping !== undefined && <div className={styles.orderInfoRow}><b className={styles.label}>Dostava:</b>{order.shipping === 0 ? 'Besplatno' : `${order.shipping} RSD`}</div>}
+            <div className={styles.orderInfoRow}><b className={styles.label}>ID:</b> #{order._id}</div>
+
+            <div className={styles.orderInfoRow}><b className={styles.label}>Kupac:</b> {order.user}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Email kupca:</b> {order.userEmail}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Adresa:</b> {order.address || '-'}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Grad:</b> {order.city || '-'}</div>
+            <div className={styles.orderInfoRow}><b className={styles.label}>Poštanski kod:</b> {order.postalCode || '-'}</div>
+            {/* <div className={styles.orderInfoRow}><b className={styles.label}>Dostava:</b> {order.shipping === 0 ? 'Besplatno' : order.shipping ? `${order.shipping} RSD` : '-'}</div> */}
             <div className={styles.orderInfoRow}><b className={styles.label}>Status:</b> <select
               value={order.status}
               onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
@@ -215,10 +211,10 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
           <thead>
             <tr>
               <th>Slika</th>
-              <th>Proizvod</th>
+              <th>Naziv</th>
               <th>Količina</th>
               <th>Plaćeno</th>
-              <th>Cena</th>
+              <th>Trenutna cena</th>
               <th>Ukupno</th>
             </tr>
           </thead>
@@ -250,15 +246,27 @@ const handleQuantityChange = (itemIndex: number, newQty: number) => {
                    {Number(item.subtotal / item.quantity).toFixed(0)} RSD
                 </td>
                 <td>
-                  {Number(item.product?.salePrice ?? item.product?.price ?? 0).toFixed(0)} RSD
+                {Number(item.product?.price || 0).toFixed(0)} RSD
                 </td>
                 <td>
                    {(item.subtotal).toFixed(0)} RSD
-                </td>
+                </td> 
               </tr>
             ))}
           </tbody>
         </table>
+
+        </div>
+
+        <div className={styles.orderSummary}>
+          <div className={styles.summaryRow}>
+            <span className={styles.summaryLabel}>Ukupno:</span>
+            <span className={styles.summaryValue}>
+              {order.orderItems.reduce((sum: number, item: any) =>
+                sum + (item.subtotal || (item.quantity * (item.product?.salePrice || item.product?.price || 0))), 0
+              ).toFixed(0)} RSD
+            </span>
+          </div>
         </div>
           </div>
         </div>

@@ -6,8 +6,6 @@ const isDev = process.env.NODE_ENV === "development";
 
 const uri = isDev ? process.env.MONGODB_URI_DEV : process.env.MONGODB_URI_PROD;
 
-// const dbName = isDev ? process.env.MONGODB_DB_DEV : process.env.MONGODB_DB_PROD;
-
 const settingsDbName = isDev
   ? process.env.MONGODB_SETTINGS_DB_DEV
   : process.env.MONGODB_SETTINGS_DB_PROD;

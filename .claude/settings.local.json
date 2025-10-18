@@ -16,7 +16,8 @@
       "Bash(ren:*)",
       "Bash(mv:*)",
       "Bash(mkdir:*)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(npx tsc --noEmit lib/actions/order.ts)"
     ],
     "deny": [],
     "ask": []

@@ -134,6 +134,32 @@
     width: 100% !important;
     margin-left: 0px !important;
   }
+
+  .orderSummary {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+
+    .summaryRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+
+      .summaryLabel {
+        color: #555;
+      }
+
+      .summaryValue {
+        color: var(--primary);
+        font-size: 20px;
+      }
+    }
+  }
 }
 
 // Skeleton Styles
