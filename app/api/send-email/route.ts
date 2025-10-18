@@ -34,8 +34,7 @@ export async function POST(req: NextRequest) {
 
     // Fallback to environment variables if tenant credentials not found
     if (!gmailUser || !gmailAppPassword) {
-      gmailUser = process.env.EMAIL_USER;
-      gmailAppPassword = process.env.EMAIL_APP_PASSWORD;
+      throw new Error('Gmail credentials not found for the specified tenant');
     }
 
     if (!gmailUser || !gmailAppPassword) {

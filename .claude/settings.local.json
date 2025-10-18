@@ -15,7 +15,8 @@
       "Bash(rm:*)",
       "Bash(ren:*)",
       "Bash(mv:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(tasklist)"
     ],
     "deny": [],
     "ask": []

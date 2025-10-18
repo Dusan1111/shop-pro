@@ -1,6 +1,9 @@
 "use server"
 
 import { redirect } from "next/navigation"
+import { getUserDbFromSession } from "@/lib/session"
+import { clientPromise, settingsDbName } from "@/lib/mongodb"
+import { ObjectId } from "mongodb"
 
 export interface OrderItem {
   _id: string
@@ -30,21 +33,58 @@ export interface OrderSummary {
   orderDate: string
 }
 
+interface TenantInfo {
+  businessEmail: string
+  phoneNumber: string
+  name: string
+}
+
 export async function processOrder(orderData: OrderSummary) {
   try {
     console.log("Processing order for:", orderData.customerInfo.fullName)
+
+    // Get tenant ID from session
+    const session = await getUserDbFromSession()
+    const tenantId = session?.tenantId
+
+    // Fetch tenant information from database
+    let tenantInfo: TenantInfo | null = null
+    if (tenantId) {
+      try {
+        const client = await clientPromise
+        const settingsDb = client.db(settingsDbName)
+        const tenant = await settingsDb.collection('Tenants').findOne({
+          _id: new ObjectId(tenantId)
+        }) as any
+
+        if (tenant) {
+          tenantInfo = {
+            businessEmail: tenant.businessEmail || 'infosanyswings@gmail.com',
+            phoneNumber: tenant.phoneNumber || '1-800-555-1234',
+            name: tenant.name || 'Sany Swings'
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching tenant info:', error)
+      }
+    }
+
+    // Use default values if tenant info not found
+    if (!tenantInfo) {
+      throw new Error('Tenant information not found')
+    }
 
     // Save order to database first
     const savedOrder = await saveOrderToDatabase(orderData)
     console.log("Order saved to database with ID:", savedOrder.orderId)
 
     // Format the order email content
-    const emailContent = formatOrderEmail(orderData)
+    const emailContent = formatOrderEmail(orderData, tenantInfo)
     console.log("Email content formatted successfully")
 
     // Send email to both admin and customer
-    await sendAdminEmail(emailContent, orderData)
-    await sendCustomerEmail(orderData)
+    await sendAdminEmail(emailContent, orderData, tenantId)
+    await sendCustomerEmail(orderData, tenantId, tenantInfo)
     console.log("Email sent successfully")
 
     return {
@@ -58,7 +98,7 @@ export async function processOrder(orderData: OrderSummary) {
   }
 }
 
-function formatOrderEmail(orderData: OrderSummary): string {
+function formatOrderEmail(orderData: OrderSummary, tenantInfo: TenantInfo): string {
   const { items, customerInfo, shipping, total, orderDate } = orderData
   const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL
 
@@ -85,7 +125,7 @@ function formatOrderEmail(orderData: OrderSummary): string {
     </head>
     <body>
       <div class="header">
-        <h1>Nova porudžbina - Sany Swings</h1>
+        <h1>Nova porudžbina - ${tenantInfo.name}</h1>
         <p>Datum: ${orderDate}</p>
       </div>
 
@@ -155,7 +195,7 @@ function formatOrderEmail(orderData: OrderSummary): string {
   return emailHTML
 }
 
-function formatCustomerEmail(orderData: OrderSummary): string {
+function formatCustomerEmail(orderData: OrderSummary, tenantInfo: TenantInfo): string {
   const { items, customerInfo, subtotal, shipping, total, orderDate } = orderData
   const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL
 
@@ -178,18 +218,22 @@ function formatCustomerEmail(orderData: OrderSummary): string {
         .total-row { display: flex; justify-content: space-between; margin: 5px 0; }
         .final-total { font-weight: bold; font-size: 18px; border-top: 2px solid #4f687b; padding-top: 10px; }
         .thank-you { background-color: #f1f5f8; padding: 20px; border-radius: 5px; text-align: center; margin: 20px 0; }
+        .warning-box { background-color: #fff3cd; border: 3px solid #ff9800; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
+        .warning-icon { font-size: 32px; margin-bottom: 10px; }
+        .warning-title { font-weight: bold; font-size: 18px; color: #ff6b00; margin: 10px 0; }
+        .warning-text { font-size: 16px; color: #856404; line-height: 1.8; }
       </style>
     </head>
     <body>
       <div class="header">
         <h1>Hvala na Vašoj porudžbini!</h1>
-        <p>Sany Swings</p>
+        <p>${tenantInfo.name}</p>
       </div>
 
       <div class="content">
         <div class="thank-you">
           <h2>Poštovani/a ${customerInfo.fullName},</h2>
-          <p>Hvala Vam što ste odabrali Sany Swings! Vaša porudžbina je uspešno primljena.</p>
+          <p>Hvala Vam što ste odabrali ${tenantInfo.name}! Vaša porudžbina je uspešno primljena.</p>
           <p><strong>Datum porudžbine:</strong> ${orderDate}</p>
         </div>
 
@@ -239,6 +283,15 @@ function formatCustomerEmail(orderData: OrderSummary): string {
           </div>
         </div>
 
+        <div class="warning-box">
+          <div class="warning-icon">⚠️</div>
+          <div class="warning-title">VAŽNO OBAVEŠTENJE</div>
+          <div class="warning-text">
+            <strong>Cena dostave NIJE uključena u prikazani iznos.</strong><br>
+            Konačna cena dostave će biti dogovorena prilikom potvrde porudžbine, u zavisnosti od vaše lokacije i težine proizvoda.
+          </div>
+        </div>
+
         <h3>Adresa dostave</h3>
         <p>
           ${customerInfo.fullName}<br>
@@ -251,12 +304,12 @@ function formatCustomerEmail(orderData: OrderSummary): string {
           <p><strong>Šta je sledeće?</strong></p>
           <p>Kontaktiraćemo Vas u najkraćem roku radi potvrde porudžbine i dogovora dostave.</p>
           <p>Ukoliko imate bilo kakva pitanja, možete nas kontaktirati na:</p>
-          <p>📧 Email: infosanyswings@gmail.com</p>
-          <p>📞 Telefon: 1-800-555-1234</p>
+          <p>📧 Email: ${tenantInfo.businessEmail}</p>
+          <p>📞 Telefon: ${tenantInfo.phoneNumber}</p>
         </div>
 
         <p style="text-align: center; color: #666; margin-top: 30px;">
-          <em>Hvala Vam što ste odabrali Sany Swings za igru vaše dece!</em>
+          <em>Hvala Vam što ste odabrali ${tenantInfo.name} za igru vaše dece!</em>
         </p>
       </div>
     </body>
@@ -267,26 +320,34 @@ function formatCustomerEmail(orderData: OrderSummary): string {
 }
 
 // Send detailed order email to admin
-async function sendAdminEmail(emailContent: string, orderData: OrderSummary) {
+async function sendAdminEmail(emailContent: string, orderData: OrderSummary, tenantId?: string) {
   const emailData = {
     to: "panticdusan93@gmail.com",
     subject: `Nova porudžbina od ${orderData.customerInfo.fullName} - ${orderData.orderDate}`,
     html: emailContent,
-    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com"
+    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com",
+    tenantId
   }
 
   return await sendEmail(emailData, "admin")
 }
 
 // Send confirmation email to customer
-async function sendCustomerEmail(orderData: OrderSummary) {
-  const customerEmailContent = formatCustomerEmail(orderData)
+async function sendCustomerEmail(orderData: OrderSummary, tenantId?: string, tenantInfo?: TenantInfo) {
+  const defaultTenantInfo: TenantInfo = {
+    businessEmail: 'infosanyswings@gmail.com',
+    phoneNumber: '1-800-555-1234',
+    name: 'Sany Swings'
+  }
+
+  const customerEmailContent = formatCustomerEmail(orderData, tenantInfo || defaultTenantInfo)
 
   const emailData = {
     to: orderData.customerInfo.email,
-    subject: `Potvrda porudžbine - Sany Swings`,
+    subject: `Potvrda porudžbine - ${tenantInfo?.name || 'Sany Swings'}`,
     html: customerEmailContent,
-    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com"
+    from: process.env.EMAIL_USER || "noreply@kidsswinghamaven.com",
+    tenantId
   }
 
   return await sendEmail(emailData, "customer")

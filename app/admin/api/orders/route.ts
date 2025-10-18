@@ -230,17 +230,27 @@ async function sendStatusChangeEmail(order: any, orderItems: any[], newStatus: s
         </div>
 
         <div class="totals">
-          ${order.shipping !== undefined ? `
-          <div class="total-row">
-            <span>Dostava:</span>
-            <span>${Number(order.shipping) === 0 ? 'Besplatno' : Number(order.shipping).toFixed(2) + ' RSD'}</span>
-          </div>
-          ` : ''}
-          <div class="total-row final-total">
+          <div class="total-row final-total" style="border-bottom: 2px solid #4f687b; padding-bottom: 15px; margin-bottom: 15px;">
             <span>UKUPNO:</span>
             <span>${Number(order.total).toFixed(2)} RSD</span>
           </div>
+          ${newStatus === "Poslata" ? `
+          <div class="total-row" style="font-size: 16px; color: #856404; font-weight: bold;">
+            <span>+ Dostava</span>
+          </div>
+          ` : ''}
         </div>
+
+        ${newStatus === "Poslata" ? `
+        <div style="background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">
+            ⚠️ NAPOMENA: DOSTAVA NIJE UKLJUČENA U CENU
+          </p>
+          <p style="margin: 10px 0 0 0; font-size: 16px; color: #856404;">
+            Cena dostave zavisi od izabrane kurirske službe i biće dogovorena prilikom potvrde porudžbine.
+          </p>
+        </div>
+        ` : ''}
 
         ${order.address ? `
         <h3>Adresa dostave</h3>
