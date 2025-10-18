@@ -77,12 +77,14 @@ export async function PUT(req: NextRequest) {
     if (order.userEmail) {
       try {
         console.log("Attempting to send status change email...");
+        console.log("Request URL:", req.url);
         const emailResult = await sendStatusChangeEmail(
           order,
           orderItems,
           status,
           id,
-          session.tenantId
+          session.tenantId,
+          req.url // Pass the full request URL
         );
         console.log("Email sent successfully:", emailResult);
       } catch (emailError) {
@@ -111,7 +113,8 @@ async function sendStatusChangeEmail(
   orderItems: any[],
   newStatus: string,
   orderId: string,
-  tenantId?: string
+  tenantId?: string,
+  requestUrl?: string
 ) {
   const BLOB_URL = process.env.NEXT_PUBLIC_BLOB_URL;
 
@@ -327,9 +330,32 @@ async function sendStatusChangeEmail(
   console.log(
     "Prepared email data:", emailData
   );
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  console.log("Base URL for email API:", baseUrl);
+  // Determine base URL - IMPORTANT: Don't use NEXT_PUBLIC_BASE_URL in server-side code!
+  // In production it reads from .env.local which has localhost
+  let baseUrl: string;
+
+  if (requestUrl) {
+    // Best method: Extract from incoming request URL
+    try {
+      const url = new URL(requestUrl);
+      baseUrl = url.origin;
+      console.log("✅ Using base URL from request:", baseUrl);
+    } catch (error) {
+      console.error("Error parsing request URL:", error);
+      baseUrl = "http://localhost:3000";
+    }
+  } else if (process.env.VERCEL_URL) {
+    // Vercel automatically provides this in production
+    baseUrl = `https://${process.env.VERCEL_URL}`;
+    console.log("✅ Using base URL from VERCEL_URL:", baseUrl);
+  } else {
+    // Local development fallback
+    baseUrl = "http://localhost:3000";
+    console.log("⚠️ Using localhost fallback:", baseUrl);
+  }
+
+  console.log("Final base URL for email API:", baseUrl);
   const response = await fetch(`${baseUrl}/api/send-email`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
