@@ -118,8 +118,8 @@ async function sendStatusChangeEmail(
   // Fetch tenant contact information
   let tenantEmail = "";
   let tenantPhone = "";
-  let tenantName = "Sany Swings";
-
+  let tenantName = "";
+  let businessEmailPassword = "";
   if (tenantId) {
     try {
       console.log("Fetching tenant information...");
@@ -134,11 +134,8 @@ async function sendStatusChangeEmail(
         tenantEmail = tenant.businessEmail;
         tenantPhone = tenant.phoneNumber;
         tenantName = tenant.name;
-        console.log("Tenant info loaded:", {
-          tenantName,
-          tenantEmail,
-          tenantPhone,
-        });
+        businessEmailPassword = tenant.businessEmailPassword;
+
       } else {
         console.log("Tenant not found");
       }
@@ -324,6 +321,7 @@ async function sendStatusChangeEmail(
     html: emailHTML,
     from: tenantEmail,
     tenantId: tenantId,
+    businessEmailPassword:  businessEmailPassword,
   };
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
