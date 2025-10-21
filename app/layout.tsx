@@ -5,7 +5,9 @@ import "./globals.scss";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "@/components/AuthProvider";
+import { SidebarProvider } from "@/components/SidebarContext";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,20 +34,25 @@ export default function RootLayout({
       </head>
       <body className={plusJakartaSans.className}>
         <AuthProvider>
-          <Navbar />
-          {children}
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
+          <SidebarProvider>
+            <Navbar />
+            <Sidebar />
+            <div className="main-content">
+              {children}
+            </div>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </SidebarProvider>
         </AuthProvider>
       </body>
     </html>

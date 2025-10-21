@@ -1,6 +1,9 @@
 .manageOrdersPage {
-  overflow: hidden;
+  overflow-x: auto;
   padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+
   h1 {
     margin-bottom: 1.5rem;
     font-size: 22px;
@@ -9,6 +12,15 @@
 
   select {
     min-width: 120px;
+  }
+
+  // Account for sidebar on desktop
+  @media (min-width: 1024px) {
+    max-width: calc(100vw - 250px);
+  }
+
+  @media (max-width: 1023px) {
+    padding: 15px;
   }
 }
 

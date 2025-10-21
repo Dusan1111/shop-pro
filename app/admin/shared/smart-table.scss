@@ -12,9 +12,21 @@ th {
 }
 
 .tableContainer {
-  overflow: auto;
+  overflow-x: auto;
   border-radius: 12px;
   padding: 24px;
+  max-width: 100%;
+
+  // On desktop with sidebar, account for sidebar width
+  @media (min-width: 1024px) {
+    max-width: calc(100vw - 250px - 48px); // Subtract sidebar width and padding
+  }
+
+  // On mobile/tablet without sidebar
+  @media (max-width: 1023px) {
+    max-width: calc(100vw - 48px); // Just subtract padding
+    padding: 16px;
+  }
 }
 
 .table {
@@ -23,6 +35,11 @@ th {
   overflow-x: visible;
   margin-top: 16px;
   width: 100%;
+  min-width: 600px; // Ensure table has minimum width for scrolling
+
+  @media (max-width: 768px) {
+    min-width: 500px;
+  }
 }
 
 .table th {
