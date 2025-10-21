@@ -76,33 +76,40 @@ export default function LoginPage() {
         } else {
           setError(JSON.stringify(errorData.error));
         }
+        setIsSubmitting(false);
       } else {
         // Check if user is super admin
         const meResponse = await fetch("/api/auth/me");
         if (meResponse.ok) {
           const userData = await meResponse.json();
+
+          // Update auth state
           setIsAdmin(true);
           setFullName(userData.fullName || null);
           setTenantName(userData.tenantName || null);
           setPermissions(userData.permissions || []);
 
-          if (userData.isSuperAdmin) {
-            setIsSuperAdmin(true);
-            router.push("/admin/manage-companies");
-          } else {
-            setIsSuperAdmin(false);
-            router.push("/admin/manage-orders");
-          }
+          // Use setTimeout to allow React to finish updating before navigation
+          setTimeout(() => {
+            if (userData.isSuperAdmin) {
+              setIsSuperAdmin(true);
+              router.push("/admin/manage-companies");
+            } else {
+              setIsSuperAdmin(false);
+              router.push("/admin/manage-orders");
+            }
+          }, 100);
         } else {
           // Fallback if /api/auth/me fails
           setIsAdmin(true);
-          router.push("/admin/manage-orders");
+          setTimeout(() => {
+            router.push("/admin/manage-orders");
+          }, 100);
         }
       }
     } catch (err) {
       console.error("Greška prilikom logovanja:", err);
       setError("Došlo je do greške prilikom logovanja.");
-    } finally {
       setIsSubmitting(false);
     }
   };

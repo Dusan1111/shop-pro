@@ -26,14 +26,29 @@
 
 .tabsContainer {
   display: flex;
-  gap: 8px;
+  gap: 0;
   margin-bottom: 20px;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 0;
+  background: linear-gradient(135deg, rgba(248, 250, 255, 0.8) 0%, rgba(240, 245, 255, 0.8) 100%);
+  border-bottom: 2px solid rgba(173, 216, 230, 0.4);
+  padding: 0;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 139, 0.1), transparent);
+  }
 }
 
 .tab {
-  padding: 12px 24px;
+  flex: 1;
+  padding: 14px 24px;
   font-size: 15px;
   font-weight: 600;
   color: #6b7280;
@@ -41,32 +56,43 @@
   border: none;
   border-bottom: 3px solid transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   bottom: -2px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  white-space: nowrap;
 
-  &:hover {
-    background-color: rgba(37, 99, 235, 0.05);
-  }
-
-  &.activeTab {
-    border-bottom-color: currentColor;
-    background-color: rgba(0, 0, 0, 0.03);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   // Primljene tab - Orange
   &:nth-child(1) {
     color: #ff9800;
 
-    &:hover {
-      background-color: rgba(255, 152, 0, 0.05);
+    &::before {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.03), rgba(255, 152, 0, 0.02));
+    }
+
+    &:hover::before {
+      opacity: 1;
     }
 
     &.activeTab {
-      background-color: rgba(255, 152, 0, 0.08);
+      border-bottom-color: #ff9800;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 240, 0.9));
+      font-weight: 700;
+      box-shadow: 0 -2px 8px rgba(255, 152, 0, 0.1);
     }
   }
 
@@ -74,12 +100,19 @@
   &:nth-child(2) {
     color: #2196f3;
 
-    &:hover {
-      background-color: rgba(33, 150, 243, 0.05);
+    &::before {
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.03), rgba(33, 150, 243, 0.02));
+    }
+
+    &:hover::before {
+      opacity: 1;
     }
 
     &.activeTab {
-      background-color: rgba(33, 150, 243, 0.08);
+      border-bottom-color: #2196f3;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.9));
+      font-weight: 700;
+      box-shadow: 0 -2px 8px rgba(33, 150, 243, 0.1);
     }
   }
 
@@ -87,18 +120,31 @@
   &:nth-child(3) {
     color: #f44336;
 
-    &:hover {
-      background-color: rgba(244, 67, 54, 0.05);
+    &::before {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.03), rgba(244, 67, 54, 0.02));
+    }
+
+    &:hover::before {
+      opacity: 1;
     }
 
     &.activeTab {
-      background-color: rgba(244, 67, 54, 0.08);
+      border-bottom-color: #f44336;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 240, 240, 0.9));
+      font-weight: 700;
+      box-shadow: 0 -2px 8px rgba(244, 67, 54, 0.1);
     }
   }
 
   @media (max-width: 768px) {
-    padding: 10px 16px;
+    padding: 12px 16px;
     font-size: 14px;
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 450px) {
+    padding: 10px 12px;
+    font-size: 13px;
   }
 }
 
