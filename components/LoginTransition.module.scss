@@ -1,0 +1,47 @@
+.transitionOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+
+  &.fadeOut {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.transitionVideo {
+  width: 60%;
+  max-width: 400px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 16px;
+  // box-shadow: 0 20px 60px rgba(0, 0, 139, 0.15), 0 8px 20px rgba(0, 0, 139, 0.1);
+  // border: 1px solid rgba(173, 216, 230, 0.3);
+
+  @media (max-width: 1024px) {
+    width: 70%;
+    max-width: 600px;
+  }
+
+  @media (max-width: 768px) {
+    width: 85%;
+    max-width: 500px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    width: 90%;
+    border-radius: 8px;
+  }
+}

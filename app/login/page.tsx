@@ -89,22 +89,27 @@ export default function LoginPage() {
           setTenantName(userData.tenantName || null);
           setPermissions(userData.permissions || []);
 
-          // Use setTimeout to allow React to finish updating before navigation
-          setTimeout(() => {
-            if (userData.isSuperAdmin) {
-              setIsSuperAdmin(true);
-              router.push("/admin/manage-companies");
-            } else {
-              setIsSuperAdmin(false);
-              router.push("/admin/manage-orders");
-            }
-          }, 100);
+          // Determine target route
+          const route = userData.isSuperAdmin
+            ? "/admin/manage-companies"
+            : "/admin/manage-orders";
+
+          if (userData.isSuperAdmin) {
+            setIsSuperAdmin(true);
+          } else {
+            setIsSuperAdmin(false);
+          }
+
+          // Set flag to show transition animation on target page
+          sessionStorage.setItem('showLoginTransition', 'true');
+
+          // Redirect immediately to target route
+          router.push(route);
         } else {
           // Fallback if /api/auth/me fails
           setIsAdmin(true);
-          setTimeout(() => {
-            router.push("/admin/manage-orders");
-          }, 100);
+          sessionStorage.setItem('showLoginTransition', 'true');
+          router.push("/admin/manage-orders");
         }
       }
     } catch (err) {
@@ -115,8 +120,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.loginPage}>
-      <h1>Uloguj se</h1>
+    <>
+      <div className={styles.loginPage}>
+        <h1>Uloguj se</h1>
       <form onSubmit={handleSubmit} className={styles.loginForm}>
         <div className={styles.formGroup}>
           <span >Email</span>
@@ -177,6 +183,7 @@ export default function LoginPage() {
         </div>
 
       </form>
-    </div>
+      </div>
+    </>
   );
 }

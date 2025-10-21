@@ -8,6 +8,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { SidebarProvider } from "@/components/SidebarContext";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import TransitionProvider from "@/components/TransitionProvider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
               pauseOnHover
               theme="light"
             />
+            <TransitionProvider />
           </SidebarProvider>
         </AuthProvider>
       </body>

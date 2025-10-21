@@ -22,15 +22,13 @@
   }
 
   @media (max-width: 1023px) {
-    margin-left: 1rem;
-    margin-right: 1rem;
     border-radius: 12px;
   }
 }
 
 .mainContent {
   flex: 1;
-  padding: 6.25rem 0.125rem;
+  padding: 0.25rem 0.125rem;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
