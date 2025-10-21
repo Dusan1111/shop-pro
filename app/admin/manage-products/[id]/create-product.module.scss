@@ -210,7 +210,6 @@
   }
 
   @media (max-width: 480px) {
-    width: 80px;
     height: 80px;
 
     img {
@@ -248,7 +247,6 @@
   }
 
   @media (max-width: 480px) {
-    width: 80px;
     height: 80px;
     font-size: 1.5rem;
   }
@@ -326,6 +324,10 @@
     font-weight: 500;
     color: var(--foreground);
     position: static;
+  }
+
+  @media (max-width: 768px) {
+    order: -1;
   }
 }
 
