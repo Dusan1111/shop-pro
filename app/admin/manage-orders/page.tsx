@@ -25,6 +25,7 @@ export default function ManageOrdersPage() {
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<OrderStatus>("U pripremi");
+  const [isInitialized, setIsInitialized] = useState(false);
   const [statusCounts, setStatusCounts] = useState<Record<OrderStatus, number>>({
     "U pripremi": 0,
     "Poslata": 0,
@@ -32,34 +33,33 @@ export default function ManageOrdersPage() {
   });
   const router = useRouter();
 
-  const fetchStatusCounts = useCallback(async () => {
+  // Load saved tab from localStorage on mount
+  useEffect(() => {
+    const savedTab = localStorage.getItem('ordersActiveTab');
+    if (savedTab && (savedTab === "U pripremi" || savedTab === "Poslata" || savedTab === "Otkazana")) {
+      setActiveTab(savedTab as OrderStatus);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  const fetchStatusCount = useCallback(async (status: OrderStatus) => {
     try {
-      const statuses: OrderStatus[] = ["U pripremi", "Poslata", "Otkazana"];
-      const counts: Record<OrderStatus, number> = {
-        "U pripremi": 0,
-        "Poslata": 0,
-        "Otkazana": 0
-      };
-
-      await Promise.all(
-        statuses.map(async (status) => {
-          const params = new URLSearchParams({
-            page: "0",
-            pageSize: "1",
-            search: "",
-            status: status
-          });
-          const response = await fetch(`api/orders?${params}`, { method: "GET" });
-          const data = await response.json();
-          if (response.ok) {
-            counts[status] = data.totalCount;
-          }
-        })
-      );
-
-      setStatusCounts(counts);
+      const params = new URLSearchParams({
+        page: "0",
+        pageSize: "1",
+        search: "",
+        status: status
+      });
+      const response = await fetch(`api/orders?${params}`, { method: "GET" });
+      const data = await response.json();
+      if (response.ok) {
+        setStatusCounts(prev => ({
+          ...prev,
+          [status]: data.totalCount
+        }));
+      }
     } catch (error) {
-      console.error("Error fetching status counts:", error);
+      console.error("Error fetching status count:", error);
     }
   }, []);
 
@@ -78,6 +78,11 @@ export default function ManageOrdersPage() {
       if (response.ok) {
         setOrders(data.data);
         setTotalCount(data.totalCount);
+        // Update the count for the current active tab
+        setStatusCounts(prev => ({
+          ...prev,
+          [activeTab]: data.totalCount
+        }));
       } else {
         console.error("Error fetching orders:", data.message);
       }
@@ -89,12 +94,10 @@ export default function ManageOrdersPage() {
   }, [currentPage, pageSize, searchQuery, activeTab]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-
-  useEffect(() => {
-    fetchStatusCounts();
-  }, [fetchStatusCounts]);
+    if (isInitialized) {
+      fetchOrders();
+    }
+  }, [fetchOrders, isInitialized]);
 
 
   // Function to get the styling for a status
@@ -137,6 +140,7 @@ export default function ManageOrdersPage() {
     setActiveTab(status);
     setCurrentPage(0);
     setSearchQuery("");
+    localStorage.setItem('ordersActiveTab', status);
   };
 
   return (
@@ -146,31 +150,33 @@ export default function ManageOrdersPage() {
       </div>
       <div className={styles.manageCategoriesPage}>
         <div className={styles.manageOrdersPage}>
-          <div className={styles.tabsContainer}>
-            <button
-              className={`${styles.tab} ${activeTab === "U pripremi" ? styles.activeTab : ""}`}
-              onClick={() => handleTabChange("U pripremi")}
-            >
-              Primljene
-              {statusCounts["U pripremi"] > 0 && (
-                <span className={styles.countBadge}>{statusCounts["U pripremi"]}</span>
-              )}
-            </button>
-            <button
-              className={`${styles.tab} ${activeTab === "Poslata" ? styles.activeTab : ""}`}
-              onClick={() => handleTabChange("Poslata")}
-            >
-              Poslate
-            </button>
-            <button
-              className={`${styles.tab} ${activeTab === "Otkazana" ? styles.activeTab : ""}`}
-              onClick={() => handleTabChange("Otkazana")}
-            >
-              Otkazane
-            </button>
-          </div>
+          <div className={styles.tabCard}>
+            <div className={styles.tabsContainer}>
+              <button
+                className={`${styles.tab} ${activeTab === "U pripremi" ? styles.activeTab : ""}`}
+                onClick={() => handleTabChange("U pripremi")}
+              >
+                Primljene
+                {statusCounts["U pripremi"] > 0 && (
+                  <span className={styles.countBadge}>{statusCounts["U pripremi"]}</span>
+                )}
+              </button>
+              <button
+                className={`${styles.tab} ${activeTab === "Poslata" ? styles.activeTab : ""}`}
+                onClick={() => handleTabChange("Poslata")}
+              >
+                Poslate
+              </button>
+              <button
+                className={`${styles.tab} ${activeTab === "Otkazana" ? styles.activeTab : ""}`}
+                onClick={() => handleTabChange("Otkazana")}
+              >
+                Otkazane
+              </button>
+            </div>
 
-          <TableComponent
+            <div className={styles.tabContent}>
+              <TableComponent
             data={orders}
             columns={["ID", "Vreme", "Korisnik", "Email", "Telefon", "Total", "Status"]}
             columnKeys={["_id", "orderTime", "user", "userEmail", "userPhone", "total", "status"]}
@@ -193,6 +199,8 @@ export default function ManageOrdersPage() {
             }}
             isLoading={loading}
           />
+            </div>
+          </div>
         </div>
       </div>
     </>
