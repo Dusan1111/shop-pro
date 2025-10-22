@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./manage-products.module.scss";
 import TableComponent from "../shared/smart-table";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,19 @@ import { useAuth } from "@/components/AuthProvider";
 
 export default function ManageProductsCategoriesPage() {
   const { hasPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'attributes' | 'attribute-values'>('products');
+
+  // Determine initial tab based on permissions
+  const getInitialTab = (): 'products' | 'categories' | 'attributes' | 'attribute-values' | null => {
+    if (typeof window !== 'undefined') {
+      const savedTab = localStorage.getItem('productsActiveTab');
+      if (savedTab && (savedTab === 'products' || savedTab === 'categories' || savedTab === 'attributes' || savedTab === 'attribute-values')) {
+        return savedTab as 'products' | 'categories' | 'attributes' | 'attribute-values';
+      }
+    }
+    return null; // No default tab
+  };
+
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'attributes' | 'attribute-values' | null>(getInitialTab());
 
   // Product interfaces and state
   interface Product {
@@ -56,14 +68,36 @@ export default function ManageProductsCategoriesPage() {
   const [apiMessage, setApiMessage] = useState<string | null>(null);
   const router = useRouter();
 
+  // Load data when active tab changes (only if a tab is selected)
   useEffect(() => {
-    loadData();
-  }, []);
+    if (activeTab !== null) {
+      loadData();
+    }
+  }, [activeTab]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      await Promise.all([getProducts(), getCategories(), getAttributes(), getAttributeValues()]);
+      console.log('Loading data for tab:', activeTab);
+      // Only fetch data for the active tab
+      switch (activeTab) {
+        case 'products':
+          console.log('Calling getProducts API');
+          await getProducts();
+          break;
+        case 'categories':
+          console.log('Calling getCategories API');
+          await getCategories();
+          break;
+        case 'attributes':
+          console.log('Calling getAttributes API');
+          await getAttributes();
+          break;
+        case 'attribute-values':
+          console.log('Calling getAttributeValues API');
+          await getAttributeValues();
+          break;
+      }
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -211,6 +245,11 @@ export default function ManageProductsCategoriesPage() {
     ),
   };
 
+  const handleTabChange = (tab: 'products' | 'categories' | 'attributes' | 'attribute-values') => {
+    setActiveTab(tab);
+    localStorage.setItem('productsActiveTab', tab);
+  };
+
   return (
     <>
       <div className="page-title">
@@ -224,7 +263,7 @@ export default function ManageProductsCategoriesPage() {
             {hasPermission('manage_products') && (
               <button
                 className={`${styles.tabButton} ${activeTab === 'products' ? styles.active : ''}`}
-                onClick={() => setActiveTab('products')}
+                onClick={() => handleTabChange('products')}
               >
                 Proizvodi
               </button>
@@ -232,7 +271,7 @@ export default function ManageProductsCategoriesPage() {
             {hasPermission('manage_categories') && (
               <button
                 className={`${styles.tabButton} ${activeTab === 'categories' ? styles.active : ''}`}
-                onClick={() => setActiveTab('categories')}
+                onClick={() => handleTabChange('categories')}
               >
                 Kategorije
               </button>
@@ -240,7 +279,7 @@ export default function ManageProductsCategoriesPage() {
             {hasPermission('manage_attributes') && (
               <button
                 className={`${styles.tabButton} ${activeTab === 'attributes' ? styles.active : ''}`}
-                onClick={() => setActiveTab('attributes')}
+                onClick={() => handleTabChange('attributes')}
               >
                 Atributi
               </button>
@@ -248,7 +287,7 @@ export default function ManageProductsCategoriesPage() {
             {hasPermission('manage_attribute_values') && (
               <button
                 className={`${styles.tabButton} ${activeTab === 'attribute-values' ? styles.active : ''}`}
-                onClick={() => setActiveTab('attribute-values')}
+                onClick={() => handleTabChange('attribute-values')}
               >
                 Vrednosti atributa
               </button>
@@ -257,7 +296,11 @@ export default function ManageProductsCategoriesPage() {
 
           {/* Tab Content */}
           <div className={styles.tabContent}>
-            {activeTab === 'products' && hasPermission('manage_products') ? (
+            {activeTab === null ? (
+              <p style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
+                Izaberite tab da prikažete sadržaj
+              </p>
+            ) : activeTab === 'products' && hasPermission('manage_products') ? (
               <>
                 <button
                   className={styles.addButton}

@@ -152,7 +152,7 @@ export default function AttributeValuePage() {
       <div className={styles.attributeValuePage}>
         <button
           className={styles.backButtonTop}
-          onClick={() => router.push("/admin/manage-attribute-values")}
+          onClick={() => router.push("/admin/manage-products")}
           disabled={actionLoading}
         >
           Nazad

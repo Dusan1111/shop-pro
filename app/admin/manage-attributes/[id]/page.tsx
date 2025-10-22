@@ -107,7 +107,7 @@ export default function AttributePage() {
       <div className={styles.attributePage}>
         <button
           className={styles.backButtonTop}
-          onClick={() => router.push("/admin/manage-attributes")}
+          onClick={() => router.push("/admin/manage-products")}
           disabled={actionLoading}
         >
           Nazad
